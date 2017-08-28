@@ -1,0 +1,1 @@
+<?php echo e($model->a); ?>
