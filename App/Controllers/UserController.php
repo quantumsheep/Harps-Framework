@@ -1,23 +1,17 @@
 <?php
 namespace App\Controllers;
 
-use Libs\Controller\View;
-use Libs\Controller\Model;
-use Libs\Controller\Manager;
-use Libs\Utils\Database;
-use Libs\Utils\Tools;
-use App\Managers\UsersManager;
+use Harps\Controller\View;
+use Harps\Utils\Database;
 
 class UserController
 {
     public function user_profil($request, $i) {
-        $conn = Database::getConnection();
+        $db = new Database();
+        $conn = $db->getConnection();
+        $users = $db->Send_Request($conn, "SELECT * FROM users WHERE username=?", true, $request);
+        $model = $users;
 
-        $model = new UsersModel();
-
-        $model->rowuser = UsersManager::getUser($conn, $request["profilId"]);
-        $model->request = $request;
-
-        return View::Load("/Users/board.php", $model);
+        return View::Load("/Users/board", $model);
     }
 }

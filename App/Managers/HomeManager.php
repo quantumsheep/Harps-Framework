@@ -1,7 +1,7 @@
 <?php
 namespace App\Managers;
 
-use Libs\Utils\Database;
+use Harps\Utils\Database;
 
 class HomeManager
 {

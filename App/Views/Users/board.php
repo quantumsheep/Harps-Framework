@@ -1,6 +1,6 @@
 <?php
 
-foreach($model->rowuser as $a) {
+foreach($model as $a) {
     foreach($a as $b) {
         echo $b;
     }

@@ -1,5 +1,6 @@
 {
 	"require": {
-	    "philo/laravel-blade": "3.*"
+    "philo/laravel-blade": "3.*",
+    "phpmailer/phpmailer": "~6.0"
 	}
 }

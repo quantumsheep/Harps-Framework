@@ -1,34 +1,18 @@
 <?php
 /**
  *
- * PATHS
- * /!\ If you change the paths, don't forget to also change the "use" and "namespace" path in all files that need to be changed
+ * CONFIGURATION
  *
  */
 
-define("DEV", true);
-define("GET_ALL_ERRORS", false);
+define("DEV", true); // true = Complete error and exception debug | false = User oriented error and exception (Error 500)
+define("GET_ALL_ERRORS", false); // true = Active the full error handling | false = Desactive the full error handling
 
-define("DIR_ROOT", dirname(__DIR__) . "/");
-define("DIR_APP", DIR_ROOT . "App/");
-define("DIR_LIBS", DIR_ROOT . "Libs/");
-define("DIR_CONFIG", DIR_ROOT . "Config/");
-
-define("DIR_VIEWS", DIR_APP . "Views/");
-define("DIR_CONTROLLERS", DIR_APP . "Controllers/");
-define("DIR_MANAGERS", DIR_APP . "Managers/");
-define("DIR_MODELS", DIR_APP . "Models/");
-
-define("DIR_BLADE_CACHE", DIR_LIBS . 'Others/Blade/Cache/');
-
-define("DIR_EXCEPTIONS_VIEWS", DIR_VIEWS . "Exceptions/");
-define("FILE_ERROR_500", DIR_EXCEPTIONS_VIEWS . "500.php");
-define("FILE_ERROR_500_DEV", DIR_EXCEPTIONS_VIEWS . "500-DEV.php");
 
 
 /**
  *
- * DATABASE
+ * DATABASE INFORMATIONS
  *
  */
 
@@ -38,3 +22,44 @@ define("DB_USER", "root");
 define("DB_PASS", "koala");
 define("DB_NAME", "harps");
 define("DB_HOST_PORT", DB_HOST . ":" . DB_PORT);
+
+
+
+/**
+ *
+ * SMTP INFORMATIONS
+ *
+ */
+
+define("SMTP_HOST", "");
+define("SMTP_USER", "");
+define("SMTP_PASS", "");
+define("SMTP_PORT", 587);
+define("SMTP_ENCRYPT", "tls");
+
+
+
+/**
+ *
+ * PATHS
+ * /!\ If you change the paths, don't forget to also change the "use" and "namespace" path in all files that need to be changed
+ *
+ */
+
+define("DS", DIRECTORY_SEPARATOR);
+
+define("DIR_ROOT", dirname(__DIR__) . DS);
+define("DIR_APP", DIR_ROOT . "App" . DS);
+define("DIR_HARPS", DIR_ROOT . "Harps" . DS);
+define("DIR_CONFIG", DIR_ROOT . "Config" . DS);
+
+define("DIR_VIEWS", DIR_APP . "Views" . DS);
+define("DIR_CONTROLLERS", DIR_APP . "Controllers" . DS);
+define("DIR_MANAGERS", DIR_APP . "Managers" . DS);
+define("DIR_MODELS", DIR_APP . "Models" . DS);
+
+define("DIR_BLADE_CACHE", DIR_HARPS . "Others" . DS . "Blade" . DS . "Cache" . DS);
+
+define("DIR_EXCEPTIONS_VIEWS", DIR_VIEWS . "Exceptions" . DS);
+define("FILE_ERROR_500", DIR_EXCEPTIONS_VIEWS . "500.php");
+define("FILE_ERROR_500_DEV", DIR_EXCEPTIONS_VIEWS . "500-DEV.php");
