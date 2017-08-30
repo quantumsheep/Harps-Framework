@@ -11,13 +11,14 @@ use Harps\Utils\SMTP;
 class HomeController extends Controller
 {
     public static function index() {
-        $smtp = new SMTP();
         $model = new HomeModel();
         $model->a = "Hello";
 
-        HomeManager::getMenu();
-
         return View::Load("index", $model);
+    }
+
+    public static function AjaxTest() {
+        echo 'hi';
     }
 }
 
