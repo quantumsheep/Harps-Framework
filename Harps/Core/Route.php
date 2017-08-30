@@ -14,34 +14,36 @@ class Route {
      * @param mixed $controller The controller address (example for function 'index()' in 'DefaultController': 'Default@index')
      */
     public static function get($uri, $controller) {
-        $request = array();
+        if($_SERVER['REQUEST_METHOD'] == "GET") {
+            $request = array();
 
-        if(preg_match('/{(.*?)}/', $uri)) {
-            $cutted_uri = explode('/', CURRENT_URI);
-            $cutted_requested = explode('/', $uri);
+            if(preg_match('/{(.*?)}/', $uri)) {
+                $cutted_uri = explode('/', CURRENT_URI);
+                $cutted_requested = explode('/', $uri);
 
-            if(count($cutted_requested) == count($cutted_uri)) {
-                for($i = 0; count($cutted_uri) != $i; $i++) {
-                    if(preg_match('/{(.*?)}/', $cutted_requested[$i], $requested_vars)) {
-                        $request[$requested_vars[1]] = $cutted_uri[$i];
-                        $cutted_requested[$i] = $cutted_uri[$i];
+                if(count($cutted_requested) == count($cutted_uri)) {
+                    for($i = 0; count($cutted_uri) != $i; $i++) {
+                        if(preg_match('/{(.*?)}/', $cutted_requested[$i], $requested_vars)) {
+                            $request[$requested_vars[1]] = $cutted_uri[$i];
+                            $cutted_requested[$i] = $cutted_uri[$i];
+                        }
                     }
                 }
+
+                $uri = implode('/', $cutted_requested);
             }
 
-            $uri = implode('/', $cutted_requested);
-        }
+            if($uri == CURRENT_URI) {
+                if(is_callable($controller)) {
+                    call_user_func($controller);
+                } else if(strpos($controller, '@') !== false) {
+                    $controller = explode('@', $controller);
+                    $result = ("\\App\\Controllers\\" . $controller[0] . "Controller")::{$controller[1]}($request, "hi");
+                    self::RedirectToView($result[0], $result[1]);
+                }
 
-        if($uri == CURRENT_URI) {
-            if(is_callable($controller)) {
-                call_user_func($controller);
-            } else if(strpos($controller, '@') !== false) {
-                $controller = explode('@', $controller);
-                $result = ("\\App\\Controllers\\" . $controller[0] . "Controller")::{$controller[1]}($request, "hi");
-                self::RedirectToView($result[0], $result[1]);
+                $GLOBALS["ROUTED"] = true;
             }
-
-            $GLOBALS["ROUTED"] = true;
         }
     }
 

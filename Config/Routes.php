@@ -8,3 +8,4 @@ use Harps\Core\Route;
 
 Route::get('/', "Home@index");
 Route::get('/users/{profilId}/board', "User@user_profil");
+Route::post('', '');
