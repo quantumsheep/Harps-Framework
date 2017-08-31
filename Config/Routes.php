@@ -1,5 +1,6 @@
 <?php
 use Harps\Core\Route;
+use Harps\Controllers\View;
 /**
  *
  * ROUTING
@@ -8,7 +9,6 @@ use Harps\Core\Route;
 
 Route::get('/', "Home@index");
 Route::get('/users/{profilId}/board', "User@user_profil");
-Route::post('/ajax/test', 'Home@AjaxTest');
-Route::match(['post', 'get'], '/testing/{nb}', function($nb) {
-    echo $nb;                                  
+Route::get('/test', function() {
+    View::load('index');
 });

@@ -11,7 +11,7 @@ class Route {
     /**
      * Get the content from a specific URI
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The controller address (example for function 'index()' in 'DefaultController': 'Default@index')
+     * @param mixed $callback The action do to if the uri is valid
      */
     public static function get(string $uri, $callback) {
         if($_SERVER['REQUEST_METHOD'] == "GET") {
@@ -26,7 +26,7 @@ class Route {
     /**
      * Use the POST method from a specific URI
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The controller address (example for function 'index()' in 'DefaultController': 'Default@index')
+     * @param mixed $callback The action do to if the uri is valid
      */
     public static function post(string $uri, $callback) {
         if($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -41,7 +41,7 @@ class Route {
     /**
      * Use the PUT method from a specific URI
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The controller address (example for function 'index()' in 'DefaultController': 'Default@index')
+     * @param mixed $callback The action do to if the uri is valid
      */
     public static function put(string $uri, $callback) {
         if($_SERVER['REQUEST_METHOD'] == "PUT") {
@@ -54,10 +54,39 @@ class Route {
     }
 
     /**
+     * Use the PATCH method from a specific URI
+     * @param string $uri Requested URI to do the action
+     * @param mixed $callback The action do to if the uri is valid
+     */
+    public static function patch(string $uri, $callback) {
+        if($_SERVER['REQUEST_METHOD'] == "PATCH") {
+            self::getUnknownVar($uri, $request);
+
+            if($uri == CURRENT_URI) {
+                self::routing($callback, $request);
+            }
+        }
+    }
+    /**
+     * Use the DELETE method from a specific URI
+     * @param string $uri Requested URI to do the action
+     * @param mixed $callback The action do to if the uri is valid
+     */
+    public static function delete(string $uri, $callback) {
+        if($_SERVER['REQUEST_METHOD'] == "DELETE") {
+            self::getUnknownVar($uri, $request);
+
+            if($uri == CURRENT_URI) {
+                self::routing($callback, $request);
+            }
+        }
+    }
+
+    /**
      * Route if the client's requested method is one of the $method array
      * @param array $method Accepted methods
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The controller address (example for function 'index()' in 'DefaultController': 'Default@index')
+     * @param mixed $callback The action do to if the uri is valid
      */
     public static function match(array $method, string $uri, $callback) {
         if(in_array($_SERVER['REQUEST_METHOD'], array_map('strtoupper', $method))) {
@@ -71,14 +100,39 @@ class Route {
 
     /**
      * Route without checking client's requested method
-     * @param array $method Accepted methods
      * @param string $uri Requested URI to do the action
+     * @param mixed $callback The action do to if the uri is valid
      */
     public static function any(string $uri, $callback) {
         self::getUnknownVar($uri, $request);
 
         if($uri == CURRENT_URI) {
             self::routing($callback, $request);
+        }
+    }
+
+    /**
+     * Summary of group
+     * @param array $uris The URIs allowed to do the callback action
+     * @param mixed $callback The action do to if one of the uris are valid
+     * @throws \InvalidArgumentException
+     */
+    public static function group($uris, $callback) {
+        if(is_array($uris)) {
+            foreach($uris as $uri => $method) {
+                if($_SERVER['REQUEST_METHOD'] == strtoupper($method) || $method == "any") {
+                    self::getUnknownVar($uri, $request);
+
+                    if($uri == CURRENT_URI) {
+                        self::routing($callback, $request);
+                    }
+
+                    break;
+                }
+            }
+        } else {
+            $backtrace = debug_backtrace()[0];
+            throw new \InvalidArgumentException("The URIs must be an array" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
         }
     }
 

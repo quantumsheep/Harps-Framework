@@ -1,12 +1,8 @@
 <?php
 namespace App\Controllers;
 
-use Harps\Controller\View;
-use App\Managers\HomeManager;
+use Harps\Controllers\Controller;
 use App\Models\HomeModel;
-use Harps\Utils\Database;
-use Harps\Core\Controller;
-use Harps\Utils\SMTP;
 
 class HomeController extends Controller
 {
@@ -14,12 +10,10 @@ class HomeController extends Controller
         $model = new HomeModel();
         $model->a = "Hello";
 
-        return View::Load("index", $model);
+        return self::view("index", $model);
     }
 
     public static function AjaxTest() {
         echo 'hi';
     }
 }
-
-?>

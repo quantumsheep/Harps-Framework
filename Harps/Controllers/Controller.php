@@ -1,17 +1,17 @@
 <?php
-namespace Harps\Controller;
+namespace Harps\Controllers;
 
-class View {
+class Controller
+{
     /**
-     * Return a view
-     * @param mixed $view The simple view name like 'index' or '/doc/harps', file extension will be completed by itself
+     * Check and return a view value
+     * @param string $view The simple view name like 'index' or '/doc/harps', file extension will be completed by itself
      * @param mixed $var The data to send to the view
      * @throws \Exception
-     * @return array
      */
-    public static function Load($view, $var) {
+    protected static function view(string $view, $var) {
         if(glob(DIR_VIEWS . $view . ".*")) {
-            return [$view, $var];
+            return array($view, $var);
         } else {
             $backtrace = debug_backtrace()[0];
             throw new \Exception("View not found : " . $view . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
