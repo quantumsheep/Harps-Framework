@@ -7,8 +7,8 @@ use Harps\Controllers\View;
  *
  */
 
-Route::get('/', "Home@index");
-Route::get('/users/{profilId}/board', "User@user_profil");
-Route::get('/test', function() {
-    View::load('index');
-});
+Route::get('/', "Default@index");
+
+Route::get('/page/{nb}', function($nb) {
+    echo $nb;
+})->where(["nb" => "[0-9]"]);

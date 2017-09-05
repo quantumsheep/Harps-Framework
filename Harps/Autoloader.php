@@ -14,7 +14,7 @@ class Autoloader
         $classToFind = $path[sizeof($path) - 1];
 
         if(file_exists(DIR_ROOT . $class.'.php')) {
-            if(!class_exists(($classToFind), false))
+            if(!class_exists(implode('\\', $path), false))
                 require DIR_ROOT . $class.'.php';
         } else {
             $backtrace = debug_backtrace()[1];

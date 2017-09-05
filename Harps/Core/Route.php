@@ -8,6 +8,10 @@ if(!defined("ROUTED"))
     $GLOBALS["ROUTED"] = false;
 
 class Route {
+    private static $accept_route = false;
+    private static $callback;
+    private static $request;
+
     /**
      * Get the content from a specific URI
      * @param string $uri Requested URI to do the action
@@ -18,9 +22,13 @@ class Route {
             self::getUnknownVar($uri, $request);
 
             if($uri == CURRENT_URI) {
-                self::routing($callback, $request);
+                self::$callback = $callback;
+                self::$request = $request;
+                self::$accept_route = true;
             }
         }
+
+        return new Route();
     }
 
     /**
@@ -33,9 +41,13 @@ class Route {
             self::getUnknownVar($uri, $request);
 
             if($uri == CURRENT_URI) {
-                self::routing($callback, $request);
+                self::$callback = $callback;
+                self::$request = $request;
+                self::$accept_route = true;
             }
         }
+
+        return new Route();
     }
 
     /**
@@ -48,9 +60,13 @@ class Route {
             self::getUnknownVar($uri, $request);
 
             if($uri == CURRENT_URI) {
-                self::routing($callback, $request);
+                self::$callback = $callback;
+                self::$request = $request;
+                self::$accept_route = true;
             }
         }
+
+        return new Route();
     }
 
     /**
@@ -63,9 +79,13 @@ class Route {
             self::getUnknownVar($uri, $request);
 
             if($uri == CURRENT_URI) {
-                self::routing($callback, $request);
+                self::$callback = $callback;
+                self::$request = $request;
+                self::$accept_route = true;
             }
         }
+
+        return new Route();
     }
     /**
      * Use the DELETE method from a specific URI
@@ -77,9 +97,13 @@ class Route {
             self::getUnknownVar($uri, $request);
 
             if($uri == CURRENT_URI) {
-                self::routing($callback, $request);
+                self::$callback = $callback;
+                self::$request = $request;
+                self::$accept_route = true;
             }
         }
+
+        return new Route();
     }
 
     /**
@@ -93,9 +117,13 @@ class Route {
             self::getUnknownVar($uri, $request);
 
             if($uri == CURRENT_URI) {
-                self::routing($callback, $request);
+                self::$callback = $callback;
+                self::$request = $request;
+                self::$accept_route = true;
             }
         }
+
+        return new Route();
     }
 
     /**
@@ -107,8 +135,12 @@ class Route {
         self::getUnknownVar($uri, $request);
 
         if($uri == CURRENT_URI) {
-            self::routing($callback, $request);
+            self::$callback = $callback;
+            self::$request = $request;
+            self::$accept_route = true;
         }
+
+        return new Route();
     }
 
     /**
@@ -124,12 +156,16 @@ class Route {
                     self::getUnknownVar($uri, $request);
 
                     if($uri == CURRENT_URI) {
-                        self::routing($callback, $request);
+                        self::$callback = $callback;
+                        self::$request = $request;
+                        self::$accept_route = true;
                     }
 
                     break;
                 }
             }
+
+            return new Route();
         } else {
             $backtrace = debug_backtrace()[0];
             throw new \InvalidArgumentException("The URIs must be an array" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
@@ -158,6 +194,21 @@ class Route {
             }
 
             $uri = implode('/', $cutted_requested);
+        }
+    }
+
+    /**
+     * Define conditions to the unknown variables
+     * @param array $conditions Unknown variables conditions for the route to be accepted, use like ["nb" => "[0-9]"]
+     */
+    public function where($conditions) {
+        if(self::$accept_route == true) {
+            foreach($conditions as $key => $condition) {
+                if(!preg_match("/^" . $condition . "$/", self::$request[$key])) {
+                    self::$accept_route = false;
+                    break;
+                }
+            }
         }
     }
 
@@ -206,5 +257,15 @@ class Route {
         if (strstr($uri, '?')) $uri = substr($uri, 0, strpos($uri, '?'));
         $uri = '/' . trim($uri, '/');
         return $uri;
+    }
+
+    /**
+     * Redirect if the route is validated
+     */
+    private function __destruct() {
+        if(self::$accept_route == true) {
+            self::$accept_route = false;
+            self::routing(self::$callback, self::$request);
+        }
     }
 }

@@ -74,7 +74,7 @@
                 <div class="container">
                     <?php
                 echo get_class($e) . " : ";
-                if($e_special = explode('|||', $e->getMessage())) {
+                if(count($e_special = explode('|||', $e->getMessage())) > 1) {
                     echo $e_special[0] . "<br />";
                     ?>
                     <span class="error-subtitle"><?php echo $e_special[1]; ?></span>

@@ -1,4 +1,7 @@
 <?php
+use Harps\FilesUtils\Directories;
+use Harps\FilesUtils\Files;
+
 class Boot
 {
     /**
