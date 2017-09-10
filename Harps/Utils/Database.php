@@ -51,61 +51,82 @@ class Database
     }
 
     /**
-     * Send secure SQL queries with prepared statements (or without)
+     * Send a SQL query
      * @param \mysqli $conn The mysqli connection (use Database::getConnection() to get one)
-     * @param string $prepared_command The SQL Command to send (use prepare statement with '?' mark) if you need it
+     * @param string $command The SQL command to send
      * @param bool $returnResult If true the function will return the result of the query, if false it will return the query's result
-     * @param mixed $params Parameters to bind if you use prepared statement, leave null if don't using it
      * @throws \InvalidArgumentException
      * @throws \mysqli_sql_exception
      * @return mixed
      */
-    public static function Send_Request(\mysqli $conn, string $command, bool $returnResult = true, $params = null) {
+    public static function send(\mysqli $conn, string $command, bool $returnResult = true) {
         $backtrace = debug_backtrace()[0];
 
-        if(isset($params)) {
-            $stmt = $conn->prepare($command);
+        $result = $conn->query($command);
 
-            if($stmt !== false) {
-                if(is_array($params)) {
-                    foreach($params as $prm) {
-                        $prm_val = self::GetParamType($prm);
-                        if($prm_val != false) {
-                            $stmt->bind_param($prm_val, $prm);
-                        } else {
-                            throw new \InvalidArgumentException("Invalid parameter" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
-                        }
-                    }
-                } else {
-                    $prm_val = self::GetParamType($params);
+        if(!$conn->error && $result->num_rows > 0 && $returnResult == true) {
+            $result = $result->fetch_all();
+        } else if($conn->error) {
+            throw new \mysqli_sql_exception($conn->error . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Send a prepared SQL query
+     * @param \mysqli $conn The mysqli connection (use Database::getConnection() to get one)
+     * @param string $command The SQL prepared command to send
+     * @param array|string $params Parameters to bind to the prepared statement
+     * @param bool $returnResult If true the function will return the result of the query, if false it will return the smtp object
+     * @throws \InvalidArgumentException
+     * @throws \mysqli_sql_exception
+     * @return mixed
+     */
+    public static function send_prepared(\mysqli $conn, string $command, $params, bool $returnResult = true) {
+        $backtrace = debug_backtrace()[0];
+
+        $stmt = $conn->prepare($command);
+
+        if($stmt !== false) {
+            if(is_array($params)) {
+                $prm_val = "";
+                foreach($params as $prm) {
+                    $prm_val .= self::GetParamType($prm);
                     if($prm_val != false) {
-                        $stmt->bind_param($prm_val, $params);
                     } else {
                         throw new \InvalidArgumentException("Invalid parameter" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
                     }
                 }
 
-                $stmt->execute();
+                $params_bind = array();
+                $params_bind[] = &$prm_val;
 
-                if(!$stmt->error && $returnResult == true) {
-                    return ($stmt->get_result())->fetch_all(MYSQLI_NUM);
-                } else if($stmt->error) {
-                    throw new \mysqli_sql_exception($stmt->error . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+                $n = count($params);
+                for($i = 0; $i < $n; $i++) {
+                    $params_bind[] = &$params[$i];
+                }
+
+                call_user_func_array(array($stmt, 'bind_param'), $params_bind);
+            } else {
+                $prm_val = self::GetParamType($params);
+                if($prm_val != false) {
+                    $stmt->bind_param($prm_val, $params);
+                } else {
+                    throw new \InvalidArgumentException("Invalid parameter" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
                 }
             }
 
-            return $stmt;
-        } else {
-            $result = $conn->query($command);
+            $stmt->execute();
 
-            if(!$conn->error && $result->num_rows > 0 && $returnResult == true) {
-                $result = $result->fetch_all();
-            } else if($conn->error) {
-                throw new \mysqli_sql_exception($conn->error . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+            if(!$stmt->error && $returnResult == true) {
+                return ($stmt->get_result())->fetch_all(MYSQLI_NUM);
+            } else if($stmt->error) {
+                throw new \mysqli_sql_exception($stmt->error . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
             }
-
-            return $result;
         }
+
+        return $stmt;
     }
 
     /**

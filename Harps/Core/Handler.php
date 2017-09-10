@@ -22,6 +22,7 @@ class Handler {
 
         $type = 'Error';
 
+        ob_end_clean();
         if(DEV == true) {
             if(defined("FILE_ERROR_500_DEV") && file_exists(FILE_ERROR_500_DEV)) {
                 require(FILE_ERROR_500_DEV);
@@ -33,7 +34,6 @@ class Handler {
             if(defined("FILE_ERROR_500") && file_exists(FILE_ERROR_500)) {
                 require(FILE_ERROR_500);
             } else {
-                ob_end_clean();
                 header('HTTP/1.1 500 Internal Server Error');
             }
         }
@@ -47,6 +47,8 @@ class Handler {
      */
     public static function Exception_Handler($e) {
         $type = 'Exception';
+
+        ob_end_clean();
         if(DEV == true) {
             if(defined("FILE_ERROR_500_DEV") && file_exists(FILE_ERROR_500_DEV)) {
                 require(FILE_ERROR_500_DEV);
@@ -64,7 +66,6 @@ class Handler {
             if(defined("FILE_ERROR_500") && file_exists(FILE_ERROR_500)) {
                 require(FILE_ERROR_500);
             } else {
-                ob_end_clean();
                 header('HTTP/1.1 500 Internal Server Error');
             }
         }

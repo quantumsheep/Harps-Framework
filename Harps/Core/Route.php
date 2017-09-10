@@ -1,6 +1,8 @@
 <?php
 namespace Harps\Core;
 
+use Harps\Controllers\View;
+
 if(!defined("CURRENT_URI"))
     define("CURRENT_URI", Route::getCurrentUri());
 
@@ -87,6 +89,7 @@ class Route {
 
         return new Route();
     }
+
     /**
      * Use the DELETE method from a specific URI
      * @param string $uri Requested URI to do the action
@@ -94,6 +97,25 @@ class Route {
      */
     public static function delete(string $uri, $callback) {
         if($_SERVER['REQUEST_METHOD'] == "DELETE") {
+            self::getUnknownVar($uri, $request);
+
+            if($uri == CURRENT_URI) {
+                self::$callback = $callback;
+                self::$request = $request;
+                self::$accept_route = true;
+            }
+        }
+
+        return new Route();
+    }
+
+    /**
+     * Use the DELETE method from a specific URI
+     * @param string $uri Requested URI to do the action
+     * @param mixed $callback The action do to if the uri is valid
+     */
+    public static function options(string $uri, $callback) {
+        if($_SERVER['REQUEST_METHOD'] == "OPTIONS") {
             self::getUnknownVar($uri, $request);
 
             if($uri == CURRENT_URI) {
@@ -230,8 +252,11 @@ class Route {
             $result = ("\\App\\Controllers\\" . $callback[0] . "Controller")::{$callback[1]}($request);
 
             if(isset($result) && !empty($result)) {
-                self::RedirectToView($result[0], $result[1]);
+                View::load($result[0], $result[1]);
             }
+        } else {
+            $backtrace = debug_backtrace()[2];
+            throw new \InvalidArgumentException("Callback must be a callable or a controller string" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
         }
 
         $GLOBALS["ROUTED"] = true;
@@ -257,6 +282,17 @@ class Route {
         if (strstr($uri, '?')) $uri = substr($uri, 0, strpos($uri, '?'));
         $uri = '/' . trim($uri, '/');
         return $uri;
+    }
+
+    /**
+     * Get the current URI splited
+     * @return string
+     */
+    public static function getSplitedCurrentUri() {
+        $uri = explode('/', self::getCurrentUri());
+        unset($uri[0]);
+
+        return array_values($uri);
     }
 
     /**

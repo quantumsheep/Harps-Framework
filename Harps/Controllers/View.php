@@ -13,7 +13,7 @@ class View
     public static function load(string $view, $model = null) {
         if(glob(DIR_VIEWS . $view . ".*")) {
             $blade = new \Philo\Blade\Blade(DIR_VIEWS, DIR_BLADE_CACHE);
-            echo $blade->view()->make($view)->with("model", $model)->render();
+            echo $blade->view()->make($view)->withModel($model)->render();
         } else {
             $backtrace = debug_backtrace()[0];
             throw new \Exception("View not found : " . $view . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);

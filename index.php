@@ -7,9 +7,9 @@ Boot::Harps();
 
 $loading_data = array("seconds" => microtime(TRUE) - $time, "memory" => (memory_get_usage() - $mem) / (1024));
 
-if(DEV == true) { ?>
+if(MEMORY_INFO == true) { ?>
 
-<div style="position:fixed;bottom:0;width:100%;background:rgba(0, 0, 0, 0.40);color:#fff;display:flex;">
+<div style="position:fixed;bottom:0;width:100%;background:rgba(0, 0, 0, 0.40);color:#fff;display:flex;z-index:9999;">
     <div style="padding:5px;">
         <span>Memory usage: </span>
         <span>
@@ -25,5 +25,3 @@ if(DEV == true) { ?>
     </div>
 </div>
 <?php } ?>
-
-<?php

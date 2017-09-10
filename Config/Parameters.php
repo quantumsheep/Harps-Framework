@@ -6,6 +6,7 @@
  */
 
 define("DEV", true); // true = Complete error and exception debug | false = User oriented error and exception (Error 500)
+define("MEMORY_INFO", false);
 define("GET_ALL_ERRORS", false); // true = Active the full error handling | false = Desactive the full error handling
 
 
