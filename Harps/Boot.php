@@ -15,7 +15,6 @@ class Boot
         require_once(dirname(__DIR__) . "/Config/Parameters.php");
 		
         require_once(DIR_HARPS . "Helpers.php");
-        \Autoloader::register();
         Harps\Core\Handler::register();
 
         require_once(DIR_CONFIG . "Routes.php");
