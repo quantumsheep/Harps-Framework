@@ -10,7 +10,11 @@
     "psr-4": {
       "Harps\\": "harps/",
       "App\\": "app/"
-    }
+    },
+	"files": [
+        "harps/Helpers.php",
+		"harps/Boot.php"
+    ]
   },
   "authors": [
     {
