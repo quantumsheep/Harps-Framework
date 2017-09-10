@@ -8,8 +8,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Harps\\": "harps/",
-      "App\\": "app/"
+      "Harps\\": "harps/"
     },
 	"files": [
         "harps/Helpers.php",
