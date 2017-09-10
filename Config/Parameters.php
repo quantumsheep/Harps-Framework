@@ -17,11 +17,11 @@ define("GET_ALL_ERRORS", false); // true = Active the full error handling | fals
  *
  */
 
-define("DB_HOST", "localhost");
-define("DB_PORT", "9956");
-define("DB_USER", "root");
-define("DB_PASS", "koala");
-define("DB_NAME", "harps");
+define("DB_HOST", "");
+define("DB_PORT", "");
+define("DB_USER", "");
+define("DB_PASS", "");
+define("DB_NAME", "");
 define("DB_HOST_PORT", DB_HOST . ":" . DB_PORT);
 
 
@@ -49,7 +49,7 @@ define("SMTP_ENCRYPT", "tls");
 
 define("DS", DIRECTORY_SEPARATOR);
 
-define("DIR_ROOT", dirname(__DIR__) . DS);
+define("DIR_ROOT", dirname(dirname(dirname((new \ReflectionClass(\Composer\Autoload\ClassLoader::class))->getFileName()))) . DS);
 define("DIR_APP", DIR_ROOT . "App" . DS);
 define("DIR_HARPS", DIR_ROOT . "Harps" . DS);
 define("DIR_CONFIG", DIR_ROOT . "Config" . DS);
