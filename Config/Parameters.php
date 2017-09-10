@@ -59,7 +59,7 @@ define("DIR_CONTROLLERS", DIR_APP . "Controllers" . DS);
 define("DIR_MANAGERS", DIR_APP . "Managers" . DS);
 define("DIR_MODELS", DIR_APP . "Models" . DS);
 
-define("DIR_BLADE_CACHE", DIR_HARPS . "Others" . DS . "Blade" . DS . "Cache" . DS);
+define("DIR_BLADE_CACHE", $_SERVER['DOCUMENT_ROOT'] . DS . "Others" . DS . "Blade" . DS . "Cache" . DS);
 
 define("DIR_EXCEPTIONS_VIEWS", DIR_VIEWS . "Exceptions" . DS);
 define("FILE_ERROR_500", DIR_EXCEPTIONS_VIEWS . "500.php");
