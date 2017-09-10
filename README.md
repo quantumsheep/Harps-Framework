@@ -6,8 +6,8 @@
 ## Installation
 
 > To install Harps you will need composer and just do the command:
-```php
-composer create-project "harps/harps-skeleton" sitedirectory
+```sh
+$ composer create-project "harps/harps-skeleton" sitedirectory
 ```
 
 ## How to use Harps?
