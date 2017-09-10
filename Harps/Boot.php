@@ -13,10 +13,7 @@ class Boot
         }
 
         require_once(dirname(__DIR__) . "/Config/Parameters.php");
-
-        require_once(DIR_ROOT . "vendor/autoload.php");
-        require_once(DIR_HARPS . "Autoloader.php");
-
+		
         require_once(DIR_HARPS . "Helpers.php");
         \Autoloader::register();
         Harps\Core\Handler::register();
