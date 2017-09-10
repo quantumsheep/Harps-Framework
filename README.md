@@ -3,12 +3,14 @@
 
 > Harps is a powerfull, fast and open-source PHP framework, its goal is to be  flexible and easy to use as possible.
 
+
 ## Installation
 
 > To install Harps you will need composer and just do the command:
 ```sh
 $ composer create-project "harps/harps-skeleton" sitedirectory
 ```
+
 
 ## How to use Harps?
 
