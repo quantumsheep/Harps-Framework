@@ -3,7 +3,7 @@ namespace Harps\FilesUtils;
 
 use Harps\FilesUtils\Files;
 
-class Directories extends Files
+class Directories
 {
     /**
      * Delete a directory
@@ -19,7 +19,7 @@ class Directories extends Files
                 if(!in_array($doc, [ '.', '..' ])) {
                     $doc = $directory . '/' . $doc;
                     if(!is_dir($doc)){
-                        if(!Files::deleteOne($doc)) {
+                        if(!Files::delete($doc)) {
                             $return = false;
                         }
                     } else {
