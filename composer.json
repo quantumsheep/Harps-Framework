@@ -8,11 +8,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Harps\\": "src/"
+      "Harps\\": ""
     },
 	"files": [
-        "src/Helpers.php",
-		"src/Boot.php"
+        "Helpers.php",
+		"Boot.php"
     ]
   },
   "authors": [
