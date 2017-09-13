@@ -55,7 +55,7 @@ class Handler
             if (defined("FILE_ERROR_500_DEV") && file_exists(FILE_ERROR_500_DEV)) {
                 require(FILE_ERROR_500_DEV);
             } else {
-                echo "<pre>" . self::jTraceEx($e) . "</pre>";
+                echo "<pre>" . self::ExceptionTracing($e) . "</pre>";
             }
         } else {
             if (defined("FILE_ERROR_500") && file_exists(FILE_ERROR_500)) {
