@@ -40,7 +40,7 @@ class Boot
         Handler::register();
         
         if (!file_exists(DIR_BLADE_CACHE)) {
-            Directories::create(DIR_BLADE_CACHE);
+            Directories::create(DIR_BLADE_CACHE, 0771);
         }
 
         self::define_vars();
