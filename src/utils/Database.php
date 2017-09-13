@@ -34,7 +34,8 @@ class Database
      * @param string $db_pass Optional database password
      * @param string $db_name Optional database name
      */
-    function __construct(string $db_host = DB_HOST_PORT, string $db_user = DB_USER, string $db_pass = DB_PASS, string $db_name = DB_NAME) {
+    function __construct(string $db_host = DB_HOST_PORT, string $db_user = DB_USER, string $db_pass = DB_PASS, string $db_name = DB_NAME)
+    {
         self::$db_host = $db_host;
         self::$db_user = $db_user;
         self::$db_pass = $db_pass;
@@ -45,7 +46,8 @@ class Database
      * Get the mysqli connection to your database using properties in /Config/Parameters.php
      * @return \mysqli
      */
-    public static function getConnection() {
+    public static function getConnection()
+    {
         $mysqli = new \mysqli(self::$db_host, self::$db_user, self::$db_pass, self::$db_name);
         return $mysqli;
     }
@@ -59,15 +61,16 @@ class Database
      * @throws \mysqli_sql_exception
      * @return mixed
      */
-    public static function send(\mysqli $conn, string $command, bool $returnResult = true) {
+    public static function send(\mysqli $conn, string $command, bool $returnResult = true)
+    {
         $backtrace = debug_backtrace()[0];
 
         $result = $conn->query($command);
 
-        if(!$conn->error && $result->num_rows > 0 && $returnResult == true) {
+        if (!$conn->error && $result->num_rows > 0 && $returnResult == true) {
             $result = $result->fetch_all();
-        } else if($conn->error) {
-            throw new \mysqli_sql_exception($conn->error . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+        } elseif ($conn->error) {
+            throw new \mysqli_sql_exception($conn->error);
         }
 
         return $result;
@@ -83,19 +86,20 @@ class Database
      * @throws \mysqli_sql_exception
      * @return mixed
      */
-    public static function send_prepared(\mysqli $conn, string $command, $params, bool $returnResult = true) {
+    public static function send_prepared(\mysqli $conn, string $command, $params, bool $returnResult = true)
+    {
         $backtrace = debug_backtrace()[0];
 
         $stmt = $conn->prepare($command);
 
-        if($stmt !== false) {
-            if(is_array($params)) {
+        if ($stmt !== false) {
+            if (is_array($params)) {
                 $prm_val = "";
-                foreach($params as $prm) {
+                foreach ($params as $prm) {
                     $prm_val .= self::GetParamType($prm);
-                    if($prm_val != false) {
+                    if ($prm_val != false) {
                     } else {
-                        throw new \InvalidArgumentException("Invalid parameter" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+                        throw new \InvalidArgumentException("Invalid parameter");
                     }
                 }
 
@@ -103,26 +107,26 @@ class Database
                 $params_bind[] = &$prm_val;
 
                 $n = count($params);
-                for($i = 0; $i < $n; $i++) {
+                for ($i = 0; $i < $n; $i++) {
                     $params_bind[] = &$params[$i];
                 }
 
                 call_user_func_array(array($stmt, 'bind_param'), $params_bind);
             } else {
                 $prm_val = self::GetParamType($params);
-                if($prm_val != false) {
+                if ($prm_val != false) {
                     $stmt->bind_param($prm_val, $params);
                 } else {
-                    throw new \InvalidArgumentException("Invalid parameter" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+                    throw new \InvalidArgumentException("Invalid parameter");
                 }
             }
 
             $stmt->execute();
 
-            if(!$stmt->error && $returnResult == true) {
+            if (!$stmt->error && $returnResult == true) {
                 return ($stmt->get_result())->fetch_all(MYSQLI_NUM);
-            } else if($stmt->error) {
-                throw new \mysqli_sql_exception($stmt->error . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+            } elseif ($stmt->error) {
+                throw new \mysqli_sql_exception($stmt->error);
             }
         }
 
@@ -134,17 +138,15 @@ class Database
      * @param mixed $param
      * @return \boolean|string
      */
-    private static function GetParamType($param) {
-        if(is_string($param)) {
+    private static function GetParamType($param)
+    {
+        if (is_string($param)) {
             return 's';
-        }
-        else if (is_float($param) || is_double($param) || is_real($param)) {
+        } elseif (is_float($param) || is_double($param) || is_real($param)) {
             return 'd';
-        }
-        else if(is_int($param) || is_integer($param) || is_long($param)) {
+        } elseif (is_int($param) || is_integer($param) || is_long($param)) {
             return 'i';
-        }
-        else {
+        } else {
             return false;
         }
     }

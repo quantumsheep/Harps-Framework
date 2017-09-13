@@ -21,8 +21,9 @@ class SMTP
      * @param string $encrypt Optional SMTP encryption method
      * @throws \Exception
      */
-    public function __construct(string $host = SMTP_HOST, string $username = SMTP_USER, string $password = SMTP_PASS, int $port = SMTP_PORT, string $encrypt = SMTP_ENCRYPT) {
-        if(isset($host) && isset($username) && isset($password) && isset($port) && isset($encrypt)) {
+    public function __construct(string $host = SMTP_HOST, string $username = SMTP_USER, string $password = SMTP_PASS, int $port = SMTP_PORT, string $encrypt = SMTP_ENCRYPT)
+    {
+        if (isset($host) && isset($username) && isset($password) && isset($port) && isset($encrypt)) {
             $this->mail = new PHPMailer(true);
 
             $this->mail->SMTPDebug = 0;

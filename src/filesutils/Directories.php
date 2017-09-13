@@ -10,16 +10,17 @@ class Directories
      * @param string $directory Directory path
      * @return boolean
      */
-    private static function deleteOne(string $directory) : bool {
+    private static function deleteOne(string $directory) : bool
+    {
         $return = true;
         $dir_content = scandir($directory);
 
-        if($dir_content !== FALSE) {
-            foreach($dir_content as $doc){
-                if(!in_array($doc, [ '.', '..' ])) {
+        if ($dir_content !== false) {
+            foreach ($dir_content as $doc) {
+                if (!in_array($doc, [ '.', '..' ])) {
                     $doc = $directory . '/' . $doc;
-                    if(!is_dir($doc)){
-                        if(!Files::delete($doc)) {
+                    if (!is_dir($doc)) {
+                        if (!Files::delete($doc)) {
                             $return = false;
                         }
                     } else {
@@ -29,7 +30,7 @@ class Directories
             }
         }
 
-        if($return !== false) {
+        if ($return !== false) {
             rmdir($directory);
         }
 
@@ -42,18 +43,19 @@ class Directories
      * @param int $chmod Chmod value
      * @return boolean
      */
-    private static function createOne(string $directory, int $chmod = 0770) : bool {
-        if(!file_exists($directory)) {
+    private static function createOne(string $directory, int $chmod = 0770) : bool
+    {
+        if (!file_exists($directory)) {
             $path = preg_split('/(\\\\|\/)/', $directory);
 
-            for($i = 0; $i < count($path); $i++) {
-                if(!file_exists($path[$i])) {
-                    if(!mkdir($path[$i], $chmod)) {
+            for ($i = 0; $i < count($path); $i++) {
+                if (!file_exists($path[$i])) {
+                    if (!mkdir($path[$i], $chmod)) {
                         return false;
                     }
                 }
 
-                if($i < count($path) - 1) {
+                if ($i < count($path) - 1) {
                     $path[$i + 1] = $path[$i] . DS . $path[$i + 1];
                 }
             }
@@ -67,12 +69,13 @@ class Directories
      * @param array|string $directory Path(s) to the directory(ies)
      * @return boolean
      */
-    public static function delete($directories) : bool {
+    public static function delete($directories) : bool
+    {
         $return = true;
 
-        if(is_array($directories)) {
-            foreach($directories as $directory) {
-                if(!self::deleteOne($directory)) {
+        if (is_array($directories)) {
+            foreach ($directories as $directory) {
+                if (!self::deleteOne($directory)) {
                     $return = false;
                 }
             }
@@ -89,12 +92,13 @@ class Directories
      * @param int $chmod Chmod value for the directory
      * @return boolean
      */
-    public static function create($directories, int $chmod = 0770) : bool {
+    public static function create($directories, int $chmod = 0770) : bool
+    {
         $return = true;
 
-        if(is_array($directories)) {
-            foreach($directories as $key => $value) {
-                if(strlen($value) == 4 || is_string($key)) {
+        if (is_array($directories)) {
+            foreach ($directories as $key => $value) {
+                if (strlen($value) == 4 || is_string($key)) {
                     self::createOne($key, (strlen($value) == 4 ? $value : 0770));
                 } else {
                     self::createOne($value);

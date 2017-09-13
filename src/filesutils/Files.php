@@ -10,8 +10,9 @@ class Files
      * @param string $path File path
      * @param string $content File content
      */
-    protected static function createOne(string $path, string $content = null) : bool {
-        if(file_put_contents($path, $content) === FALSE) {
+    protected static function createOne(string $path, string $content = null) : bool
+    {
+        if (file_put_contents($path, $content) === false) {
             return false;
         }
 
@@ -23,9 +24,10 @@ class Files
      * @param string $file File path
      * @return boolean
      */
-    protected static function deleteOne(string $file) : bool {
+    protected static function deleteOne(string $file) : bool
+    {
         if (file_exists($file)) {
-            if(!unlink($file)) {
+            if (!unlink($file)) {
                 return false;
             }
         }
@@ -39,12 +41,13 @@ class Files
      * @param string $content File content
      * @return boolean
      */
-    public static function create($files, string $content = null) : bool {
+    public static function create($files, string $content = null) : bool
+    {
         $return = true;
 
-        if(is_array($files)) {
-            foreach($files as $key => $value) {
-                if(is_string($value) || is_string($key)) {
+        if (is_array($files)) {
+            foreach ($files as $key => $value) {
+                if (is_string($value) || is_string($key)) {
                     self::createOne($key, (is_string($value) ? $value : null));
                 } else {
                     self::createOne($value, $content);
@@ -62,12 +65,13 @@ class Files
      * @param array|string $files Path to the file(s).
      * @return boolean
      */
-    public static function delete($files) : bool {
+    public static function delete($files) : bool
+    {
         $return = true;
 
-        if(is_array($files)) {
-            foreach($files as $file) {
-                if(!self::deleteOne($file)) {
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                if (!self::deleteOne($file)) {
                     $return = false;
                 }
             }
@@ -83,26 +87,26 @@ class Files
      * @param array|string $files Path to the file(s).
      * @return \bool|string
      */
-    public static function read($files) {
-        if(is_array($files)) {
+    public static function read($files)
+    {
+        if (is_array($files)) {
             $return = array();
 
-            foreach($files as $file) {
+            foreach ($files as $file) {
                 $file = Tools::to_ds($file);
 
-                if(file_exists($file)) {
+                if (file_exists($file)) {
                     $return[$file] = file_get_contents($file);
                 }
             }
 
-            if($return != null && count($return) < 1) {
+            if ($return != null && count($return) < 1) {
                 return false;
             } else {
                 return $return;
             }
-        }
-        else {
-            if(file_exists($files)) {
+        } else {
+            if (file_exists($files)) {
                 return file_get_contents($files);
             } else {
                 return false;

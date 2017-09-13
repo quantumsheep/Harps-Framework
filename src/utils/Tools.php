@@ -9,8 +9,7 @@ class Tools
      */
     public static function GUID()
     {
-        if (function_exists('com_create_guid') === true)
-        {
+        if (function_exists('com_create_guid') === true) {
             return trim(com_create_guid(), '{}');
         }
 
@@ -23,7 +22,8 @@ class Tools
      * @param string $path Path string to change
      * @return string
      */
-    public static function to_ds(string $path) : string {
+    public static function to_ds(string $path) : string
+    {
         return str_replace(array('/', '\\\\', '\\'), DIRECTORY_SEPARATOR, $path);
     }
 }

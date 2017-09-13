@@ -1,14 +1,15 @@
 <?php
-namespace Harps\Core;
+namespace Harps\Client;
 
 class Session
 {
     /**
      * Set a session object
-     * @param array $objects Objects to add to the session, key as session object name and value as session object value.
+     * @param array $objects Object(s) to add to the session, key as session's object name and value as session's object value.
      */
-    public function set(array $objects) {
-        foreach($objects as $key => $value) {
+    public function set(array $objects)
+    {
+        foreach ($objects as $key => $value) {
             $_SESSION[$key] = $value;
         }
 
@@ -17,27 +18,28 @@ class Session
 
     /**
      * Get session's object(s) value
-     * @param array|string $objects
+     * @param array|string $objects Session's object(s) to get
      * @return mixed
      */
-    public function get($objects) {
-        if(is_array($objects)) {
+    public function get($objects)
+    {
+        if (is_array($objects)) {
             $items = array();
 
-            foreach($objects as $obj) {
-                if(is_array($obj)) {
+            foreach ($objects as $obj) {
+                if (is_array($obj)) {
                     $backtrace = debug_backtrace()[0];
                     throw new \InvalidArgumentException("You can't use sub-array to get a session object, only strings" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
                 }
 
-                if(!empty($_SESSION[$obj])) {
+                if (!empty($_SESSION[$obj])) {
                     $items[$obj] = $_SESSION[$obj];
                 } else {
                     $items[$obj] = null;
                 }
             }
         } else {
-            if(!empty($_SESSION[$objects])) {
+            if (!empty($_SESSION[$objects])) {
                 $items = $_SESSION[$objects];
             } else {
                 $items = null;
@@ -51,9 +53,10 @@ class Session
      * Delete a session object.
      * @param array|string $objects Object(s) to delete
      */
-    public function delete($objects) {
-        if(is_array($objects)) {
-            foreach($objects as $obj) {
+    public function delete($objects)
+    {
+        if (is_array($objects)) {
+            foreach ($objects as $obj) {
                 unset($GLOBALS[_SESSION][$obj]);
             }
         } else {
@@ -67,7 +70,8 @@ class Session
      * Completly destroy the session and all its data.
      * @param bool $regen If true, the session id will be regenerated after the session destroy
      */
-    public function destroy(bool $regen = false) {
+    public function destroy(bool $regen = false)
+    {
         $_SESSION = array();
 
         if (ini_get("session.use_cookies")) {
@@ -80,15 +84,16 @@ class Session
 
         session_destroy();
 
-        if($regen == true) {
+        if ($regen == true) {
             $this->regenerate();
         }
 
         return $this;
     }
 
-    public function regenerate() {
-        if(session_status == PHP_SESSION_NONE) {
+    public function regenerate()
+    {
+        if (session_status == PHP_SESSION_NONE) {
             session_start();
         }
 
