@@ -3,146 +3,114 @@ namespace Harps\Core;
 
 class Route
 {
-    private static $accept_route = false;
-    private static $callback;
-    private static $request;
+    /**
+     * Boolean variable to check if the route is valid
+     *
+     * @var boolean
+     */
+    protected static $accept_route = false;
+
+    /**
+     * Callback for the current conditional route
+     *
+     * @var string|callable
+     */
+    protected static $callback;
+
+    /**
+     * The request of the uri's conditions
+     *
+     * @var array
+     */
+    protected static $request;
+
+    // PLANNED IMPROVEMENT
+    //
+    //protected static $patterns = [
+    //    "/{(.*?)\(int\)}/" => "/[0-9]+/",
+    //    "/{(.*?)\(word\)}/" => "/[a-zA-Z]+/",
+    //    "/{(.*?)\(string\)}/" => "/[a-z0-9-]+/",
+    //    "/{(.*?)\(alphanum\)}/" => "/[a-zA-Z0-9-_]+/",
+    //    "/{(.*?)\(guid\)}/" => "/^\{?[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}\}?$/"
+    //];
 
     /**
      * Get the content from a specific URI
+     *
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function get(string $uri, $callback)
     {
-        if ($_SERVER['REQUEST_METHOD'] == "GET") {
-            self::getUnknownVar($uri, $request);
-
-            if ($uri == CURRENT_URI) {
-                self::$callback = $callback;
-                self::$request = $request;
-                self::$accept_route = true;
-            }
-        }
-
-        return new Route();
+        return self::start_route($uri, $callback, "GET");
     }
 
     /**
      * Use the POST method from a specific URI
+     *
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function post(string $uri, $callback)
     {
-        if ($_SERVER['REQUEST_METHOD'] == "POST") {
-            self::getUnknownVar($uri, $request);
-
-            if ($uri == CURRENT_URI) {
-                self::$callback = $callback;
-                self::$request = $request;
-                self::$accept_route = true;
-            }
-        }
-
-        return new Route();
+        return self::start_route($uri, $callback, "POST");
     }
 
     /**
      * Use the PUT method from a specific URI
+     *
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function put(string $uri, $callback)
     {
-        if ($_SERVER['REQUEST_METHOD'] == "PUT") {
-            self::getUnknownVar($uri, $request);
-
-            if ($uri == CURRENT_URI) {
-                self::$callback = $callback;
-                self::$request = $request;
-                self::$accept_route = true;
-            }
-        }
-
-        return new Route();
+        return self::start_route($uri, $callback, "PUT");
     }
 
     /**
      * Use the PATCH method from a specific URI
+     *
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function patch(string $uri, $callback)
     {
-        if ($_SERVER['REQUEST_METHOD'] == "PATCH") {
-            self::getUnknownVar($uri, $request);
-
-            if ($uri == CURRENT_URI) {
-                self::$callback = $callback;
-                self::$request = $request;
-                self::$accept_route = true;
-            }
-        }
-
-        return new Route();
+        return self::start_route($uri, $callback, "PATCH");
     }
 
     /**
      * Use the DELETE method from a specific URI
+     *
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function delete(string $uri, $callback)
     {
-        if ($_SERVER['REQUEST_METHOD'] == "DELETE") {
-            self::getUnknownVar($uri, $request);
-
-            if ($uri == CURRENT_URI) {
-                self::$callback = $callback;
-                self::$request = $request;
-                self::$accept_route = true;
-            }
-        }
-
-        return new Route();
+        return self::start_route($uri, $callback, "DELETE");
     }
 
     /**
      * Use the DELETE method from a specific URI
+     *
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function options(string $uri, $callback)
     {
-        if ($_SERVER['REQUEST_METHOD'] == "OPTIONS") {
-            self::getUnknownVar($uri, $request);
-
-            if ($uri == CURRENT_URI) {
-                self::$callback = $callback;
-                self::$request = $request;
-                self::$accept_route = true;
-            }
-        }
-
-        return new Route();
+        return self::start_route($uri, $callback, "OPTIONS");
     }
 
     /**
      * Route if the client's requested method is one of the $method array
+     *
      * @param array $method Accepted methods
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function match(array $method, string $uri, $callback)
     {
         if (in_array($_SERVER['REQUEST_METHOD'], array_map('strtoupper', $method))) {
-            self::getUnknownVar($uri, $request);
-
-            if ($uri == CURRENT_URI) {
-                self::$callback = $callback;
-                self::$request = $request;
-                self::$accept_route = true;
-            }
+            self::register($uri, $callback);
         }
 
         return new Route();
@@ -150,70 +118,117 @@ class Route
 
     /**
      * Route without checking client's requested method
+     *
      * @param string $uri Requested URI to do the action
-     * @param mixed $callback The action do to if the uri is valid
+     * @param string|callable $callback The action do to if the uri is valid
      */
     public static function any(string $uri, $callback)
     {
-        self::getUnknownVar($uri, $request);
-
-        if ($uri == CURRENT_URI) {
-            self::$callback = $callback;
-            self::$request = $request;
-            self::$accept_route = true;
-        }
-
-        return new Route();
+        return self::start_route($uri, $callback);
     }
 
     /**
      * Summary of group
+     *
      * @param array $uris The URIs allowed to do the callback action
-     * @param mixed $callback The action do to if one of the uris are valid
+     * @param string|callable $callback The action do to if one of the uris are valid
      * @throws \InvalidArgumentException
      */
-    public static function group($uris, $callback)
+    public static function group(array $uris, $callback)
     {
         if (is_array($uris)) {
             foreach ($uris as $uri => $method) {
                 if ($_SERVER['REQUEST_METHOD'] == strtoupper($method) || $method == "any") {
-                    self::getUnknownVar($uri, $request);
-
-                    if ($uri == CURRENT_URI) {
-                        self::$callback = $callback;
-                        self::$request = $request;
-                        self::$accept_route = true;
-                    }
-
+                    self::register($uri, $callback);
                     break;
                 }
             }
 
             return new Route();
         } else {
-            $backtrace = debug_backtrace()[0];
-            throw new \InvalidArgumentException("The URIs must be an array" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+            throw new \InvalidArgumentException("The URIs must be an array");
+        }
+    }
+
+    /**
+     * Start the routing verification
+     *
+     * @param string $uri The conditional uri
+     * @param string|callable $callback The callback
+     * @param string $method HTTP Method to check (Leave to NULL to do not check the method for the current request)
+     * @return void
+     */
+    protected static function start_route(string $uri, $callback, string $method = NULL) {
+        if($method === NULL || $_SERVER['REQUEST_METHOD'] == $method) {
+            self::register($uri, $callback);
+        }
+
+        return new Route();
+    }
+
+    /**
+     * Start registring, reconstructing and verifying a route
+     *
+     * @param string $uri The conditional uri
+     * @param string|callable $callback The callback
+     * @return void
+     */
+    protected static function register(string $uri, $callback) {
+        $route_validity = true;
+        self::getUnknownVar($uri, $request, $route_validity);
+
+        if($route_validity == false) {
+            self::$accept_route = false;
+            return;
+        }
+
+        if ($uri == CURRENT_URI) {
+            self::$callback = $callback;
+            self::$request = $request;
+            self::$accept_route = true;
         }
     }
 
     /**
      * Get the unknown variables from the routes like "/post/{n}"
+     *
      * @param mixed $uri URI used by the client
      * @param mixed $request The requested variable
      */
-    private static function getUnknownVar(string &$uri, &$request)
+    protected static function getUnknownVar(string &$uri, &$request, &$route_validity)
     {
         $request = array();
 
-        if (preg_match('/{(.*?)}/', $uri)) {
+        if (preg_match('/{(.+?)}|\[(.+?)\]/', $uri)) {
             $cutted_uri = explode('/', CURRENT_URI);
             $cutted_requested = explode('/', $uri);
+            $n_uri = count($cutted_uri);
 
-            if (count($cutted_requested) == count($cutted_uri)) {
-                for ($i = 0; count($cutted_uri) != $i; $i++) {
-                    if (preg_match('/{(.*?)}/', $cutted_requested[$i], $requested_vars)) {
-                        $request[$requested_vars[1]] = $cutted_uri[$i];
-                        $cutted_requested[$i] = $cutted_uri[$i];
+            if (count($cutted_requested) == $n_uri) {
+                for ($i = 0; $n_uri > $i; $i++) {
+                    if (preg_match('/{(.+?)}|\[(.+?):(.+?)\]/', $cutted_requested[$i], $requested_vars)) {
+                        if($requested_vars[0][0] == '[') {
+                            $request_accepted = explode('|', $requested_vars[2]);
+
+                            $accepted = false;
+                            foreach($request_accepted as $r_acc) {
+                                if($cutted_uri[$i] === $r_acc) {
+                                    $request[$requested_vars[3]] = $r_acc;
+                                    $cutted_requested[$i] = $cutted_uri[$i];
+
+                                    $accepted = true;
+                                    break;
+                                }
+                            }
+
+                            if($accepted == false) {
+                                $route_validity = false;
+                                return;
+                            }
+                        } else {
+                            $request[$requested_vars[1]] = $cutted_uri[$i];
+                            $cutted_requested[$i] = $cutted_uri[$i];
+                        }
                     }
                 }
             }
@@ -224,6 +239,7 @@ class Route
 
     /**
      * Define conditions to the unknown variables
+     *
      * @param array $conditions Unknown variables conditions for the route to be accepted, use like ["nb" => "[0-9]"]
      */
     public function where($conditions)
@@ -239,11 +255,12 @@ class Route
     }
 
     /**
-    * Call a callable and echo his result
-    * @param string $callback Controller@Action
-    * @param array $request The Request
-    */
-    private static function callCallable(callable $callback, array $request)
+     * Call a callable and echo his result
+     *
+     * @param string $callback Controller@Action
+     * @param array $request The Request
+     */
+    protected static function callCallable(callable $callback, array $request)
     {
         if (!empty($request)) {
             echo call_user_func_array($callback, $request);
@@ -253,30 +270,31 @@ class Route
     }
 
     /**
-    * Call a controller and echo his result
-    * @param string $callback Controller@Action
-    */
-    private static function callController(string $callback, array $request)
+     * Call a controller and echo his result
+     *
+     * @param string $callback Controller@Action
+     */
+    protected static function callController(string $callback, array $request)
     {
         $callback = explode('@', $callback);
-        
-        echo ("\\App\\Controllers\\" . $callback[0] . "Controller")::{$callback[1]}($request);
+
+        echo call_user_func_array("\\App\\Controllers\\" . $callback[0] . "Controller::" . $callback[1], [$request]);
     }
 
     /**
      * Redirect to the request
-     * @param mixed $callback Route callback
+     *
+     * @param string|callable $callback Route callback
      * @param mixed $request Route request
      */
-    private static function routing($callback, $request)
+    protected static function routing($callback, $request)
     {
         if (is_callable($callback)) {
             self::callCallable($callback, $request);
         } elseif (strpos($callback, '@') !== false) {
             self::callController($callback, $request);
         } else {
-            $backtrace = debug_backtrace()[2];
-            throw new \InvalidArgumentException("Callback must be a callable or a controller string" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
+            throw new \InvalidArgumentException("Callback must be a callable or a controller's string");
         }
 
         $GLOBALS["ROUTED"] = true;
@@ -284,6 +302,7 @@ class Route
 
     /**
      * Get the current URI
+     *
      * @return string
      */
     public static function getCurrentUri()
@@ -299,6 +318,7 @@ class Route
 
     /**
      * Get the current URI splited
+     *
      * @return string
      */
     public static function getSplitedCurrentUri()
@@ -312,7 +332,7 @@ class Route
     /**
      * Redirect if the route is validated
      */
-    private function __destruct()
+    protected function __destruct()
     {
         if (self::$accept_route == true) {
             self::$accept_route = false;

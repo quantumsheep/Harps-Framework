@@ -8,6 +8,7 @@ class Redirect
     public static function to_url(string $url)
     {
         header("Location: " . $url);
+        exit();
     }
 
     public static function to_controller(string $controller, string $action)

@@ -80,23 +80,27 @@ class Handler
 
     private static function ExceptionTracing($e, $seen = null)
     {
-        $starter = $seen ? 'Caused by: ' : '';
+        $starter = $seen ? '<span>Caused by: </span>' : '';
+
         $result = array();
         if (!$seen) {
             $seen = array();
         }
-        $trace  = $e->getTrace();
-        $prev   = $e->getPrevious();
-        $result[] = sprintf('%s%s: %s', $starter, get_class($e), $e->getMessage());
+
+        $trace = $e->getTrace();
+        $prev = $e->getPrevious();
+
+        $result[] = sprintf('<span>%s%s: %s</span>', $starter, get_class($e), $e->getMessage());
+
         $file = $e->getFile();
         $line = $e->getLine();
+
         while (true) {
-            $current = "$file:$line";
-            if (is_array($seen) && in_array($current, $seen)) {
-                $result[] = sprintf(' ... %d more', count($trace)+1);
+            if (is_array($seen) && in_array("$file:$line", $seen)) {
+                $result[] = sprintf('<span>... %d more</span>', count($trace)+1);
                 break;
             }
-            $result[] = sprintf(' at %s%s%s(%s%s%s)',
+            $result[] = sprintf('<span>at %s%s%s(%s%s%s)</span>',
                                         count($trace) && array_key_exists('class', $trace[0]) ? str_replace('\\', '.', $trace[0]['class']) : '',
                                         count($trace) && array_key_exists('class', $trace[0]) && array_key_exists('function', $trace[0]) ? '.' : '',
                                         count($trace) && array_key_exists('function', $trace[0]) ? str_replace('\\', '.', $trace[0]['function']) : '(main)',
@@ -115,7 +119,7 @@ class Handler
         }
         $result = join("\n", $result);
         if ($prev) {
-            $result  .= "\n" . ExceptionTracing($prev, $seen);
+            $result .= "\n" . ExceptionTracing($prev, $seen);
         }
     
         return $result;

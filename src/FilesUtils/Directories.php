@@ -2,6 +2,7 @@
 namespace Harps\FilesUtils;
 
 use Harps\FilesUtils\Files;
+use Harps\Utils\Tools;
 
 class Directories
 {
@@ -17,8 +18,8 @@ class Directories
 
         if ($dir_content !== false) {
             foreach ($dir_content as $doc) {
-                if (!in_array($doc, [ '.', '..' ])) {
-                    $doc = $directory . '/' . $doc;
+                if (!in_array($doc, ['.', '..'])) {
+                    $doc = $directory . DIRECTORY_SEPARATOR . $doc;
                     if (!is_dir($doc)) {
                         if (!Files::delete($doc)) {
                             $return = false;
@@ -46,16 +47,18 @@ class Directories
     private static function createOne(string $directory, int $chmod = 0770) : bool
     {
         if (!file_exists($directory)) {
-            $path = preg_split('/(\\\\|\/)/', $directory);
+            $path = Tools::multi_explode(['\\\\', '/', DIRECTORY_SEPARATOR], $directory);
 
-            for ($i = 0; $i < count($path); $i++) {
+            $n_path = count($path);
+
+            for ($i = 0; $i < $n_path; $i++) {
                 if (!file_exists($path[$i])) {
                     if (!mkdir($path[$i], $chmod)) {
                         return false;
                     }
                 }
 
-                if ($i < count($path) - 1) {
+                if ($i < $n_path - 1) {
                     $path[$i + 1] = $path[$i] . DS . $path[$i + 1];
                 }
             }

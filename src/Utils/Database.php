@@ -3,74 +3,56 @@ namespace Harps\Utils;
 
 class Database
 {
-    /**
-     * Storage for database host
-     * @var string
-     */
-    private static $db_host = DB_HOST_PORT;
-
-    /**
-     * Storage for database user
-     * @var string
-     */
-    private static $db_user = DB_USER;
-
-    /**
-     * Storage for database pass
-     * @var string
-     */
-    private static $db_pass = DB_PASS;
-
-    /**
-     * Storage for database name
-     * @var string
-     */
-    private static $db_name = DB_NAME;
+    private static $db_string;
 
     /**
      * Initializing optionals Database parameters
-     * @param string $db_host Optional database host
-     * @param string $db_user Optional database username
-     * @param string $db_pass Optional database password
-     * @param string $db_name Optional database name
+     * @param string $db_connexion_name Optional database connexion name, configure the databases in the parameters configuration
      */
-    function __construct(string $db_host = DB_HOST_PORT, string $db_user = DB_USER, string $db_pass = DB_PASS, string $db_name = DB_NAME)
+    public function __construct(string $db_connexion_name = DB_CONNEXION_DEFAULT)
     {
-        self::$db_host = $db_host;
-        self::$db_user = $db_user;
-        self::$db_pass = $db_pass;
-        self::$db_name = $db_name;
+        $this->define_db_args($db_connexion_name);
     }
 
     /**
-     * Get the mysqli connection to your database using properties in /Config/Parameters.php
-     * @return \mysqli
+     * Get the PDO connection to your database using properties in /Config/Parameters.php
+     * @return \PDO
      */
     public static function getConnection()
     {
-        $mysqli = new \mysqli(self::$db_host, self::$db_user, self::$db_pass, self::$db_name);
-        return $mysqli;
+        if(!empty(self::$db_string)) {
+            $db = self::$db_string;
+        } else {
+            $db = DB_CONNEXIONS[DB_CONNEXION_DEFAULT];
+        }
+
+        // Generate the PDO connexion's string
+        return (new \PDO($db["driver"].":host=".$db["host"].(isset($db["port"]) && $db["port"] != "" ? ":" . $db["port"] : "").";dbname=".$db["name"], $db["user"], $db["pass"]));
+    }
+
+    private function define_db_args(string $db_connexion_name)
+    {
+        $this::$db_string = DB_CONNEXIONS[$db_connexion_name];
     }
 
     /**
      * Send a SQL query
-     * @param \mysqli $conn The mysqli connection (use Database::getConnection() to get one)
+     * @param \PDO $conn The PDO connection (use Database::getConnection() to get one)
      * @param string $command The SQL command to send
      * @param bool $returnResult If true the function will return the result of the query, if false it will return the query's result
      * @throws \InvalidArgumentException
      * @throws \mysqli_sql_exception
      * @return mixed
      */
-    public static function send(\mysqli $conn, string $command, bool $returnResult = true)
+    public static function send(\PDO $conn, string $command, bool $returnResult = true)
     {
-        $backtrace = debug_backtrace()[0];
+        $sth = $conn->prepare($command);
+        $sth->execute();
 
-        $result = $conn->query($command);
-
-        if (!$conn->error && $result->num_rows > 0 && $returnResult == true) {
-            $result = $result->fetch_all();
-        } elseif ($conn->error) {
-            throw new \mysqli_sql_exception($conn->error);
+        if ($sth->errorCode() == 0 && $sth->rowCount() > 0 && $returnResult == true) {
+            return $sth->fetchAll();
+        } elseif ($sth->errorCode() != 0) {
+            throw new \PDOException($sth->errorInfo()[2]);
         }
 
         return $result;
@@ -78,7 +60,7 @@ class Database
 
     /**
      * Send a prepared SQL query
-     * @param \mysqli $conn The mysqli connection (use Database::getConnection() to get one)
+     * @param \PDO $conn The PDO connection (use Database::getConnection() to get one)
      * @param string $command The SQL prepared command to send
      * @param array|string $params Parameters to bind to the prepared statement
      * @param bool $returnResult If true the function will return the result of the query, if false it will return the smtp object
@@ -86,51 +68,42 @@ class Database
      * @throws \mysqli_sql_exception
      * @return mixed
      */
-    public static function send_prepared(\mysqli $conn, string $command, $params, bool $returnResult = true)
+    public static function send_prepared(\PDO $conn, string $command, $params, bool $returnResult = true)
     {
-        $backtrace = debug_backtrace()[0];
+        $sth = $conn->prepare($command);
 
-        $stmt = $conn->prepare($command);
-
-        if ($stmt !== false) {
+        if ($sth !== false) {
             if (is_array($params)) {
-                $prm_val = "";
-                foreach ($params as $prm) {
-                    $prm_val .= self::GetParamType($prm);
+                $n_prms = count($params);
+
+                for ($i = 0; $n_prms > $i; $i++) {
+                    $prm_val = self::GetParamType($params[$i]);
+
                     if ($prm_val != false) {
+                        $sth->bindParam($i + 1, $params[$i], $prm_val);
                     } else {
                         throw new \InvalidArgumentException("Invalid parameter");
                     }
                 }
-
-                $params_bind = array();
-                $params_bind[] = &$prm_val;
-
-                $n = count($params);
-                for ($i = 0; $i < $n; $i++) {
-                    $params_bind[] = &$params[$i];
-                }
-
-                call_user_func_array(array($stmt, 'bind_param'), $params_bind);
             } else {
                 $prm_val = self::GetParamType($params);
                 if ($prm_val != false) {
-                    $stmt->bind_param($prm_val, $params);
+                    $sth->bindParam(1, $params, $prm_val);
                 } else {
                     throw new \InvalidArgumentException("Invalid parameter");
                 }
             }
 
-            $stmt->execute();
+            $sth->execute();
 
-            if (!$stmt->error && $returnResult == true) {
-                return ($stmt->get_result())->fetch_all(MYSQLI_NUM);
-            } elseif ($stmt->error) {
-                throw new \mysqli_sql_exception($stmt->error);
+            if ($sth->errorCode() == 0 && $sth->rowCount() > 0 && $returnResult == true) {
+                return $sth->fetchAll();
+            } elseif ($sth->errorCode() != 0) {
+                throw new \PDOException($sth->errorInfo()[2]);
             }
         }
 
-        return $stmt;
+        return $sth;
     }
 
     /**
@@ -140,12 +113,12 @@ class Database
      */
     private static function GetParamType($param)
     {
-        if (is_string($param)) {
-            return 's';
-        } elseif (is_float($param) || is_double($param) || is_real($param)) {
-            return 'd';
+        if (is_string($param) || is_float($param) || is_double($param) || is_real($param)) {
+            return \PDO::PARAM_STR;
         } elseif (is_int($param) || is_integer($param) || is_long($param)) {
-            return 'i';
+            return \PDO::PARAM_INT;
+        } else if(is_bool($param)) {
+            return \PDO::PARAM_BOOL;
         } else {
             return false;
         }

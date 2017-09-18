@@ -7,13 +7,13 @@ class Session
      * Set a session object
      * @param array $objects Object(s) to add to the session, key as session's object name and value as session's object value.
      */
-    public function set(array $objects)
+    public static function set(array $objects)
     {
         foreach ($objects as $key => $value) {
             $_SESSION[$key] = $value;
         }
 
-        return $this;
+        return new Session();
     }
 
     /**
@@ -21,7 +21,7 @@ class Session
      * @param array|string $objects Session's object(s) to get
      * @return mixed
      */
-    public function get($objects)
+    public static function get($objects)
     {
         if (is_array($objects)) {
             $items = array();
@@ -49,11 +49,23 @@ class Session
         return $items;
     }
 
+    public static function push(array $objects) {
+        foreach($objects as $key => $value) {
+            if(is_array($_SESSION[$key])) {
+                $_SESSION[$key][] = $value;
+            } else {
+                throw new \InvalidArgumentException("For pushing the session object must be an initialized array");
+            }
+        }
+
+        return new Session();
+    }
+
     /**
      * Delete a session object.
      * @param array|string $objects Object(s) to delete
      */
-    public function delete($objects)
+    public static function delete($objects)
     {
         if (is_array($objects)) {
             foreach ($objects as $obj) {
@@ -63,14 +75,14 @@ class Session
             unset($GLOBALS[_SESSION][$objects]);
         }
 
-        return $this;
+        return new Session();
     }
 
     /**
      * Completly destroy the session and all its data.
      * @param bool $regen If true, the session id will be regenerated after the session destroy
      */
-    public function destroy(bool $regen = false)
+    public static function destroy(bool $regen = false)
     {
         $_SESSION = array();
 
@@ -88,10 +100,10 @@ class Session
             $this->regenerate();
         }
 
-        return $this;
+        return new Session();
     }
 
-    public function regenerate()
+    public static function regenerate()
     {
         if (session_status == PHP_SESSION_NONE) {
             session_start();
@@ -99,6 +111,6 @@ class Session
 
         session_regenerate_id(true);
 
-        return $this;
+        return new Session();
     }
 }
