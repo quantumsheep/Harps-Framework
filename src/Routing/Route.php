@@ -1,5 +1,5 @@
 <?php
-namespace Harps\Core;
+namespace Harps\Routing;
 
 class Route
 {
@@ -158,8 +158,9 @@ class Route
      * @param string $method HTTP Method to check (Leave to NULL to do not check the method for the current request)
      * @return void
      */
-    protected static function start_route(string $uri, $callback, string $method = NULL) {
-        if($method === NULL || $_SERVER['REQUEST_METHOD'] == $method) {
+    protected static function start_route(string $uri, $callback, string $method = null)
+    {
+        if ($method === null || $_SERVER['REQUEST_METHOD'] == $method) {
             self::register($uri, $callback);
         }
 
@@ -173,11 +174,12 @@ class Route
      * @param string|callable $callback The callback
      * @return void
      */
-    protected static function register(string $uri, $callback) {
+    protected static function register(string $uri, $callback)
+    {
         $route_validity = true;
-        self::getUnknownVar($uri, $request, $route_validity);
+        self::get_unknown_vars($uri, $request, $route_validity);
 
-        if($route_validity == false) {
+        if ($route_validity == false) {
             self::$accept_route = false;
             return;
         }
@@ -195,7 +197,7 @@ class Route
      * @param mixed $uri URI used by the client
      * @param mixed $request The requested variable
      */
-    protected static function getUnknownVar(string &$uri, &$request, &$route_validity)
+    protected static function get_unknown_vars(string &$uri, &$request, &$route_validity)
     {
         $request = array();
 
@@ -207,12 +209,12 @@ class Route
             if (count($cutted_requested) == $n_uri) {
                 for ($i = 0; $n_uri > $i; $i++) {
                     if (preg_match('/{(.+?)}|\[(.+?):(.+?)\]/', $cutted_requested[$i], $requested_vars)) {
-                        if($requested_vars[0][0] == '[') {
+                        if ($requested_vars[0][0] == '[') {
                             $request_accepted = explode('|', $requested_vars[2]);
 
                             $accepted = false;
-                            foreach($request_accepted as $r_acc) {
-                                if($cutted_uri[$i] === $r_acc) {
+                            foreach ($request_accepted as $r_acc) {
+                                if ($cutted_uri[$i] === $r_acc) {
                                     $request[$requested_vars[3]] = $r_acc;
                                     $cutted_requested[$i] = $cutted_uri[$i];
 
@@ -221,7 +223,7 @@ class Route
                                 }
                             }
 
-                            if($accepted == false) {
+                            if ($accepted == false) {
                                 $route_validity = false;
                                 return;
                             }
@@ -260,7 +262,7 @@ class Route
      * @param string $callback Controller@Action
      * @param array $request The Request
      */
-    protected static function callCallable(callable $callback, array $request)
+    protected static function call_callable(callable $callback, array $request)
     {
         if (!empty($request)) {
             echo call_user_func_array($callback, $request);
@@ -274,7 +276,7 @@ class Route
      *
      * @param string $callback Controller@Action
      */
-    protected static function callController(string $callback, array $request)
+    protected static function call_controller(string $callback, array $request)
     {
         $callback = explode('@', $callback);
 
@@ -290,9 +292,9 @@ class Route
     protected static function routing($callback, $request)
     {
         if (is_callable($callback)) {
-            self::callCallable($callback, $request);
+            self::call_callable($callback, $request);
         } elseif (strpos($callback, '@') !== false) {
-            self::callController($callback, $request);
+            self::call_controller($callback, $request);
         } else {
             throw new \InvalidArgumentException("Callback must be a callable or a controller's string");
         }
@@ -305,7 +307,7 @@ class Route
      *
      * @return string
      */
-    public static function getCurrentUri()
+    public static function get_current_uri()
     {
         $basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)) . '/';
         $uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
@@ -321,9 +323,9 @@ class Route
      *
      * @return string
      */
-    public static function getSplitedCurrentUri()
+    public static function get_splitted_current_uri()
     {
-        $uri = explode('/', self::getCurrentUri());
+        $uri = explode('/', self::get_current_uri());
         unset($uri[0]);
 
         return array_values($uri);

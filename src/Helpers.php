@@ -1,10 +1,15 @@
 <?php
-use Harps\Core\Security;
+use Harps\Security\CSRF;
 use Harps\Controllers\View;
+use Harps\Exceptions\ViewNotFoundException;
 
-function crsf_gen()
+function csrf_gen()
 {
-    return Security::csrf_gen();
+    return CSRF::generate();
+}
+
+function csrf_regen() {
+    return CSRF::regenerate();
 }
 
 /**
@@ -18,6 +23,6 @@ function view(string $view, $model = null)
     if (glob(DIR_VIEWS . $view . ".*")) {
         return View::generate($view, $model);
     } else {
-        View::throw_not_found($view);
+        throw new ViewNotFoundException("View not found : \"$view\"");
     }
 }

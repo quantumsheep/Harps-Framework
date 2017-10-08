@@ -1,5 +1,5 @@
 <?php
-use Harps\Core\Route;
+use Harps\Routing\Route;
 use Harps\Core\Handler;
 use Harps\FilesUtils\Directories;
 use Harps\Controllers\View;
@@ -8,7 +8,7 @@ class Boot
 {
     private static function define_vars() {
         $to_define = array(
-            "CURRENT_URI" => Route::getCurrentUri()
+            "CURRENT_URI" => Route::get_current_uri()
         );
 
         $to_global = array(

@@ -1,39 +1,39 @@
 <?php
-namespace Harps\Core;
+namespace Harps\Security;
 
-class Security
+class CSRF
 {
     /**
      * Generate a new CSRF if it doesn't already exists
      * @return mixed
      */
-    public static function csrf_gen()
+    public static function generate()
     {
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
-
+        
         return $_SESSION['csrf_token'];
     }
-
-    /**
-     * Generate a new CSRF
-     * @return string
-     */
-    public static function csrf_regen()
+ 
+     /**
+      * Generate a new CSRF
+      * @return string
+      */
+    public static function regenerate()
     {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-
+ 
         return $_SESSION['csrf_token'];
     }
-
-    /**
-     * Check the validity of a token
-     * @param string $token The posted token to check
-     * @param bool $endProgram If true, will throw an Exception with the reason of the error
-     * @return bool
-     */
-    public static function csrf_check(string $token, bool $endProgram = false)
+ 
+     /**
+      * Check the validity of a token
+      * @param string $token The posted token to check
+      * @param bool $endProgram If true, will throw an Exception with the reason of the error
+      * @return bool
+      */
+    public static function check(string $token, bool $endProgram = false)
     {
         if (!empty($_SESSION['csrf_token'])) {
             if (hash_equals($_SESSION['csrf_token'], $token)) {
@@ -50,7 +50,7 @@ class Security
                 throw new \Exception("The CSRF Token doesn't exist in the session" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
             }
         }
-
+ 
         return false;
     }
 }

@@ -1,8 +1,8 @@
 <?php
-namespace Harps\Client;
+namespace Harps\Routing;
 
 use Harps\Client\Session;
-use Harps\Core\Route;
+use Harps\Routing\Route;
 
 class PathFinder {
     public $registred_path;
@@ -12,26 +12,26 @@ class PathFinder {
             if(($path_finder = Session::get("PathFinder")) != null) {
                 $this->registred_path = $path_finder;
             } else {
-                $this->reinitPathFinder();
+                $this->reinit();
             }
         } else {
-            $this->reinitPathFinder();
+            $this->reinit();
         }
 
         return $this;
     }
 
-    private function update_path_finder() {
+    private function update() {
         $this->registred_path = Session::get("PathFinder");
     }
 
-    private function reinitPathFinder() {
+    private function reinit() {
         Session::set(["PathFinder" => array()]);
     }
 
     public function register_current() {
         $current_path = array(
-            "route" => Route::getCurrentUri(),
+            "route" => Route::get_current_uri(),
             "post_data" => $_POST,
             "get_data" => $_GET
         );
@@ -42,7 +42,7 @@ class PathFinder {
             Session::push(["PathFinder" => $current_path]);
         }
 
-        $this->update_path_finder();
+        $this->update();
 
         return $this;
     }
@@ -50,7 +50,7 @@ class PathFinder {
     public function delete_last() {
         Session::set(["PathFinder" => array_pop(Session::get("PathFinder"))]);
 
-        $this->update_path_finder();
+        $this->update();
 
         return $this;
     }

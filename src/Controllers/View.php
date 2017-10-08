@@ -6,16 +6,6 @@ use Harps\Exceptions\ViewNotFoundException;
 class View
 {
     /**
-     * Throw a new ViewNotFoundException
-     * @param string $view The view not found
-     * @return void
-     */
-    public static function throw_not_found(string $view)
-    {
-        throw new ViewNotFoundException("View not found : \"$view\"");
-    }
-
-    /**
      * Create a new view using with blade template
      * @param string $view The view name
      * @param mixed $model Model to use for the view
@@ -38,7 +28,7 @@ class View
         if (glob(DIR_VIEWS . $view . ".*")) {
             echo self::blade_view($view, $model);
         } else {
-            self::throw_not_found($view);
+            throw new ViewNotFoundException("View not found : \"$view\"");
         }
     }
 
@@ -53,7 +43,7 @@ class View
         if (glob(DIR_VIEWS . $view . ".*")) {
             return self::blade_view($view, $model);
         } else {
-            self::throw_not_found($view);
+            throw new ViewNotFoundException("View not found : \"$view\"");
         }
     }
 }

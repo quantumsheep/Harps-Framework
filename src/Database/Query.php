@@ -1,58 +1,48 @@
 <?php
-namespace Harps\Utils;
+namespace Harps\Database;
 
-class Database
+use Harps\Database\Connection;
+use Harps\Database\Exceptions\QueryException;
+
+class Query
 {
-    private static $db_string;
+    public $conn;
 
     /**
      * Initializing optionals Database parameters
-     * @param string $db_connexion_name Optional database connexion name, configure the databases in the parameters configuration
+     * @param Connection|\PDO $conn Optional database connexion name, configure the databases in the parameters configuration
      */
-    public function __construct(string $db_connexion_name = DB_CONNEXION_DEFAULT)
+    public function __construct($conn)
     {
-        $this->define_db_args($db_connexion_name);
+        $this->define_conn_args($db_connexion_name);
     }
 
-    /**
-     * Get the PDO connection to your database using properties in /Config/Parameters.php
-     * @return \PDO
-     */
-    public static function getConnection()
+    private function define_conn_args(string $db_connexion_name)
     {
-        if(!empty(self::$db_string)) {
-            $db = self::$db_string;
-        } else {
-            $db = DB_CONNEXIONS[DB_CONNEXION_DEFAULT];
-        }
-
-        // Generate the PDO connexion's string
-        return (new \PDO($db["driver"].":host=".$db["host"].(isset($db["port"]) && $db["port"] != "" ? ":" . $db["port"] : "").";dbname=".$db["name"], $db["user"], $db["pass"]));
-    }
-
-    private function define_db_args(string $db_connexion_name)
-    {
-        $this::$db_string = DB_CONNEXIONS[$db_connexion_name];
+        $this::$conn = DB_CONNEXIONS[$db_connexion_name];
     }
 
     /**
      * Send a SQL query
-     * @param \PDO $conn The PDO connection (use Database::getConnection() to get one)
+     * @param Connection|\PDO $conn The PDO connection (use Database::getConnection() to get one)
      * @param string $command The SQL command to send
      * @param bool $returnResult If true the function will return the result of the query, if false it will return the query's result
-     * @throws \InvalidArgumentException
-     * @throws \mysqli_sql_exception
+     * @throws QueryException
      * @return mixed
      */
-    public static function send(\PDO $conn, string $command, bool $returnResult = true)
+    public static function send($conn, string $command, bool $returnResult = true)
     {
+        if($conn instanceof Connection) {
+            $conn = $conn->connection;
+        }
+
         $sth = $conn->prepare($command);
         $sth->execute();
 
         if ($sth->errorCode() == 0 && $sth->rowCount() > 0 && $returnResult == true) {
             return $sth->fetchAll();
         } elseif ($sth->errorCode() != 0) {
-            throw new \PDOException($sth->errorInfo()[2]);
+            throw new QueryException($sth->errorInfo()[2]);
         }
 
         return $result;
@@ -60,16 +50,20 @@ class Database
 
     /**
      * Send a prepared SQL query
-     * @param \PDO $conn The PDO connection (use Database::getConnection() to get one)
+     * @param Connection|\PDO $conn The PDO connection (use Database::getConnection() to get one)
      * @param string $command The SQL prepared command to send
      * @param array|string $params Parameters to bind to the prepared statement
      * @param bool $returnResult If true the function will return the result of the query, if false it will return the smtp object
      * @throws \InvalidArgumentException
-     * @throws \mysqli_sql_exception
+     * @throws QueryException
      * @return mixed
      */
-    public static function send_prepared(\PDO $conn, string $command, $params, bool $returnResult = true)
+    public static function send_prepared($conn, string $command, $params, bool $returnResult = true)
     {
+        if($conn instanceof Connection) {
+            $conn = $conn->connection;
+        }
+
         $sth = $conn->prepare($command);
 
         if ($sth !== false) {
@@ -77,7 +71,7 @@ class Database
                 $n_prms = count($params);
 
                 for ($i = 0; $n_prms > $i; $i++) {
-                    $prm_val = self::GetParamType($params[$i]);
+                    $prm_val = self::get_param_type($params[$i]);
 
                     if ($prm_val != false) {
                         $sth->bindParam($i + 1, $params[$i], $prm_val);
@@ -86,7 +80,7 @@ class Database
                     }
                 }
             } else {
-                $prm_val = self::GetParamType($params);
+                $prm_val = self::get_param_type($params);
                 if ($prm_val != false) {
                     $sth->bindParam(1, $params, $prm_val);
                 } else {
@@ -99,7 +93,7 @@ class Database
             if ($sth->errorCode() == 0 && $sth->rowCount() > 0 && $returnResult == true) {
                 return $sth->fetchAll();
             } elseif ($sth->errorCode() != 0) {
-                throw new \PDOException($sth->errorInfo()[2]);
+                throw new \QueryException($sth->errorInfo()[2]);
             }
         }
 
@@ -111,7 +105,7 @@ class Database
      * @param mixed $param
      * @return \boolean|string
      */
-    private static function GetParamType($param)
+    private static function get_param_type($param)
     {
         if (is_string($param) || is_float($param) || is_double($param) || is_real($param)) {
             return \PDO::PARAM_STR;
