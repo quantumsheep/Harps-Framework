@@ -1,9 +1,9 @@
 {
    "name":"harps/harps",
-   "type": "library",
    "description":"Harps - Fast, complete and easy to use PHP Framework",
    "keywords": ["harps", "framework", "route", "easy", "large"],
    "license":"MIT",
+   "type": "library",
    "require":{
       "php":">=7.0.0",
       "philo/laravel-blade":"3.*",
