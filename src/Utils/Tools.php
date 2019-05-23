@@ -8,7 +8,7 @@ class Tools
      *
      * @return string
      */
-    public static function guid_gen() : string
+    public static function guid_gen(): string
     {
         if (function_exists('com_create_guid') === true) {
             return trim(com_create_guid(), '{}');
@@ -24,7 +24,7 @@ class Tools
      * @param string $guid The guid to check
      * @return bool
      */
-    public static function guid_check(string $guid) : bool
+    public static function guid_check(string $guid): bool
     {
         if (preg_match('/^\{?[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}\}?$/', $guid)) {
             return true;
@@ -39,7 +39,7 @@ class Tools
      * @param string $path Path string to change
      * @return string
      */
-    public static function to_ds(string $path) : string
+    public static function to_ds(string $path): string
     {
         return str_replace(array('/', '\\\\', '\\'), DIRECTORY_SEPARATOR, $path);
     }
@@ -51,7 +51,7 @@ class Tools
      * @param string $string The string to split
      * @return array
      */
-    public static function multi_explode(array $delimiters, string $string) : array
+    public static function multi_explode(array $delimiters, string $string): array
     {
         return explode($delimiters[0], str_replace($delimiters, $delimiters[0], $string));
     }

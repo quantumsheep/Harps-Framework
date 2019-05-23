@@ -49,9 +49,10 @@ class Session
         return $items;
     }
 
-    public static function push(array $objects) {
-        foreach($objects as $key => $value) {
-            if(is_array($_SESSION[$key])) {
+    public static function push(array $objects)
+    {
+        foreach ($objects as $key => $value) {
+            if (is_array($_SESSION[$key])) {
                 $_SESSION[$key][] = $value;
             } else {
                 throw new \InvalidArgumentException("For pushing the session object must be an initialized array");
@@ -97,7 +98,7 @@ class Session
         session_destroy();
 
         if ($regen == true) {
-            $this->regenerate();
+            self::regenerate();
         }
 
         return new Session();

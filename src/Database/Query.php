@@ -32,7 +32,7 @@ class Query
      */
     public static function send($conn, string $command, bool $returnResult = true)
     {
-        if($conn instanceof Connection) {
+        if ($conn instanceof Connection) {
             $conn = $conn->connection;
         }
 
@@ -60,7 +60,7 @@ class Query
      */
     public static function send_prepared($conn, string $command, $params, bool $returnResult = true)
     {
-        if($conn instanceof Connection) {
+        if ($conn instanceof Connection) {
             $conn = $conn->connection;
         }
 
@@ -111,7 +111,7 @@ class Query
             return \PDO::PARAM_STR;
         } elseif (is_int($param) || is_integer($param) || is_long($param)) {
             return \PDO::PARAM_INT;
-        } else if(is_bool($param)) {
+        } else if (is_bool($param)) {
             return \PDO::PARAM_BOOL;
         } else {
             return false;

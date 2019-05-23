@@ -26,14 +26,14 @@ class Handler
         ob_end_clean();
         if (DEV == true) {
             if (defined("FILE_ERROR_500_DEV") && file_exists(FILE_ERROR_500_DEV)) {
-                require(FILE_ERROR_500_DEV);
+                require FILE_ERROR_500_DEV;
             } else {
                 echo $errstr . "<br />";
                 echo $errfile . " line " . $errline;
             }
         } else {
             if (defined("FILE_ERROR_500") && file_exists(FILE_ERROR_500)) {
-                require(FILE_ERROR_500);
+                require FILE_ERROR_500;
             } else {
                 header('HTTP/1.1 500 Internal Server Error');
             }
@@ -53,13 +53,13 @@ class Handler
         ob_end_clean();
         if (DEV == true) {
             if (defined("FILE_ERROR_500_DEV") && file_exists(FILE_ERROR_500_DEV)) {
-                require(FILE_ERROR_500_DEV);
+                require FILE_ERROR_500_DEV;
             } else {
                 echo "<pre>" . self::ExceptionTracing($e) . "</pre>";
             }
         } else {
             if (defined("FILE_ERROR_500") && file_exists(FILE_ERROR_500)) {
-                require(FILE_ERROR_500);
+                require FILE_ERROR_500;
             } else {
                 header('HTTP/1.1 500 Internal Server Error');
             }
@@ -97,16 +97,16 @@ class Handler
 
         while (true) {
             if (is_array($seen) && in_array("$file:$line", $seen)) {
-                $result[] = sprintf('<span>... %d more</span>', count($trace)+1);
+                $result[] = sprintf('<span>... %d more</span>', count($trace) + 1);
                 break;
             }
             $result[] = sprintf('<span>at %s%s%s(%s%s%s)</span>',
-                                        count($trace) && array_key_exists('class', $trace[0]) ? str_replace('\\', '.', $trace[0]['class']) : '',
-                                        count($trace) && array_key_exists('class', $trace[0]) && array_key_exists('function', $trace[0]) ? '.' : '',
-                                        count($trace) && array_key_exists('function', $trace[0]) ? str_replace('\\', '.', $trace[0]['function']) : '(main)',
-                                        $line === null ? $file : basename($file),
-                                        $line === null ? '' : ':',
-                                        $line === null ? '' : $line);
+                count($trace) && array_key_exists('class', $trace[0]) ? str_replace('\\', '.', $trace[0]['class']) : '',
+                count($trace) && array_key_exists('class', $trace[0]) && array_key_exists('function', $trace[0]) ? '.' : '',
+                count($trace) && array_key_exists('function', $trace[0]) ? str_replace('\\', '.', $trace[0]['function']) : '(main)',
+                $line === null ? $file : basename($file),
+                $line === null ? '' : ':',
+                $line === null ? '' : $line);
             if (is_array($seen)) {
                 $seen[] = "$file:$line";
             }
@@ -119,9 +119,9 @@ class Handler
         }
         $result = join("\n", $result);
         if ($prev) {
-            $result .= "\n" . ExceptionTracing($prev, $seen);
+            $result .= "\n" . self::ExceptionTracing($prev, $seen);
         }
-    
+
         return $result;
     }
 }

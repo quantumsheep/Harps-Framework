@@ -12,27 +12,27 @@ class CSRF
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
-        
+
         return $_SESSION['csrf_token'];
     }
- 
-     /**
-      * Generate a new CSRF
-      * @return string
-      */
+
+    /**
+     * Generate a new CSRF
+     * @return string
+     */
     public static function regenerate()
     {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
- 
+
         return $_SESSION['csrf_token'];
     }
- 
-     /**
-      * Check the validity of a token
-      * @param string $token The posted token to check
-      * @param bool $endProgram If true, will throw an Exception with the reason of the error
-      * @return bool
-      */
+
+    /**
+     * Check the validity of a token
+     * @param string $token The posted token to check
+     * @param bool $endProgram If true, will throw an Exception with the reason of the error
+     * @return bool
+     */
     public static function check(string $token, bool $endProgram = false)
     {
         if (!empty($_SESSION['csrf_token'])) {
@@ -50,7 +50,7 @@ class CSRF
                 throw new \Exception("The CSRF Token doesn't exist in the session" . "|||" . $backtrace["file"] . " line " . $backtrace["line"]);
             }
         }
- 
+
         return false;
     }
 }

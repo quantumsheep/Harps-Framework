@@ -11,7 +11,7 @@ class Directories
      * @param string $directory Directory path
      * @return boolean
      */
-    private static function deleteOne(string $directory) : bool
+    private static function deleteOne(string $directory): bool
     {
         $return = true;
         $dir_content = scandir($directory);
@@ -44,7 +44,7 @@ class Directories
      * @param int $chmod Chmod value
      * @return boolean
      */
-    private static function createOne(string $directory, int $chmod = 0770) : bool
+    private static function createOne(string $directory, int $chmod = 0770): bool
     {
         if (!file_exists($directory)) {
             $path = Tools::multi_explode(['\\\\', '/', DIRECTORY_SEPARATOR], $directory);
@@ -72,7 +72,7 @@ class Directories
      * @param array|string $directory Path(s) to the directory(ies)
      * @return boolean
      */
-    public static function delete($directories) : bool
+    public static function delete($directories): bool
     {
         $return = true;
 
@@ -95,7 +95,7 @@ class Directories
      * @param int $chmod Chmod value for the directory
      * @return boolean
      */
-    public static function create($directories, int $chmod = 0770) : bool
+    public static function create($directories, int $chmod = 0770): bool
     {
         $return = true;
 

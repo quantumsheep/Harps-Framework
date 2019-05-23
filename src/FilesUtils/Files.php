@@ -10,7 +10,7 @@ class Files
      * @param string $path File path
      * @param string $content File content
      */
-    protected static function createOne(string $path, string $content = null) : bool
+    protected static function createOne(string $path, string $content = null): bool
     {
         if (file_put_contents($path, $content) === false) {
             return false;
@@ -24,7 +24,7 @@ class Files
      * @param string $file File path
      * @return boolean
      */
-    protected static function deleteOne(string $file) : bool
+    protected static function deleteOne(string $file): bool
     {
         if (file_exists($file)) {
             if (!unlink($file)) {
@@ -41,7 +41,7 @@ class Files
      * @param string $content File content
      * @return boolean
      */
-    public static function create($files, string $content = null) : bool
+    public static function create($files, string $content = null): bool
     {
         $return = true;
 
@@ -65,7 +65,7 @@ class Files
      * @param array|string $files Path to the file(s).
      * @return boolean
      */
-    public static function delete($files) : bool
+    public static function delete($files): bool
     {
         $return = true;
 
