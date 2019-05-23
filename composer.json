@@ -1,27 +1,35 @@
 {
-   "name":"harps/harps",
-   "description":"Harps - Fast, complete and easy to use PHP Framework",
-   "keywords": ["harps", "framework", "route", "easy", "large"],
-   "license":"MIT",
+   "name": "harps/harps",
+   "description": "Harps - Fast, complete and easy to use PHP Framework",
+   "keywords": [
+      "harps",
+      "framework",
+      "route",
+      "easy",
+      "large"
+   ],
+   "license": "MIT",
    "type": "library",
-   "require":{
-      "php":">=7.0.0",
-      "philo/laravel-blade":"3.*",
-      "phpmailer/phpmailer":"~6.0"
+   "require": {
+      "php": ">=7.0.0",
+      "philo/laravel-blade": "3.*",
+      "phpmailer/phpmailer": "~6.0"
    },
-   "autoload":{
-      "psr-4":{ "Harps\\":"src/" },
-      "files":[
+   "autoload": {
+      "psr-4": {
+         "Harps\\": "src/"
+      },
+      "files": [
          "src/Helpers.php",
-		 "src/Boot.php"
+         "src/Boot.php"
       ]
    },
-   "authors":[
+   "authors": [
       {
-         "name":"Nathanael Demacon",
-         "email":"nathanael.dmc@outlook.fr",
-         "homepage":"https://github.com/QuantumSheep",
-         "role":"Developer"
+         "name": "Nathanael Demacon",
+         "email": "nathanael.dmc@outlook.fr",
+         "homepage": "https://github.com/QuantumSheep",
+         "role": "Developer"
       }
    ],
    "minimum-stability": "dev"
