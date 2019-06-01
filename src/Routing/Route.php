@@ -176,6 +176,10 @@ class Route
      */
     protected static function register(string $uri, $callback)
     {
+        if (isset($GLOBALS["ROUTED"]) && $GLOBALS["ROUTED"] == true) {
+            return;
+        }
+
         $route_validity = true;
         self::get_unknown_vars($uri, $request, $route_validity);
 
@@ -199,7 +203,7 @@ class Route
      */
     protected static function get_unknown_vars(string &$uri, &$request, &$route_validity)
     {
-        $request = array();
+        $request = [];
 
         if (preg_match('/{(.+?)}|\[(.+?)\]/', $uri)) {
             $cutted_uri = explode('/', CURRENT_URI);

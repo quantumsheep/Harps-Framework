@@ -90,7 +90,7 @@ class Files
     public static function read($files)
     {
         if (is_array($files)) {
-            $return = array();
+            $return = [];
 
             foreach ($files as $file) {
                 $file = Tools::to_ds($file);

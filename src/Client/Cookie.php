@@ -37,7 +37,7 @@ class Cookie
     public function get($cookies)
     {
         if (is_array($cookies)) {
-            $items = array();
+            $items = [];
 
             foreach ($cookies as $cookie) {
                 if (is_array($cookie)) {

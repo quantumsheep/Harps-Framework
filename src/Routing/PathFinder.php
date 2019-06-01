@@ -30,7 +30,7 @@ class PathFinder
 
     private function reinit()
     {
-        Session::set(["PathFinder" => array()]);
+        Session::set(["PathFinder" => []]);
     }
 
     public function register_current()

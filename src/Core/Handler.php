@@ -82,9 +82,9 @@ class Handler
     {
         $starter = $seen ? '<span>Caused by: </span>' : '';
 
-        $result = array();
+        $result = [];
         if (!$seen) {
-            $seen = array();
+            $seen = [];
         }
 
         $trace = $e->getTrace();

@@ -3,7 +3,7 @@ namespace Harps\Controllers;
 
 class Controller
 {
-    public static function run(string $controller, string $action, array $data = array())
+    public static function run(string $controller, string $action, array $data = [])
     {
         return call_user_func_array("\\App\\Controllers\\" . $controller . "Controller" . "::" . $action, $data);
     }

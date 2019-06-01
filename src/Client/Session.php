@@ -24,7 +24,7 @@ class Session
     public static function get($objects)
     {
         if (is_array($objects)) {
-            $items = array();
+            $items = [];
 
             foreach ($objects as $obj) {
                 if (is_array($obj)) {
@@ -85,7 +85,7 @@ class Session
      */
     public static function destroy(bool $regen = false)
     {
-        $_SESSION = array();
+        $_SESSION = [];
 
         if (ini_get("session.use_cookies")) {
             $params = session_get_cookie_params();

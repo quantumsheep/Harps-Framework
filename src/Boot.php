@@ -8,15 +8,15 @@ class Boot
 {
     private static function define_vars()
     {
-        $to_define = array(
+        $to_define = [
             "CURRENT_URI" => Route::get_current_uri(),
-        );
+        ];
 
-        $to_global = array(
+        $to_global = [
             "ROUTED" => false,
-            "ASSETS" => array(),
+            "ASSETS" => [],
             "ASSET_ACCEPTED" => "ACCEPTED",
-        );
+        ];
 
         foreach ($to_define as $key => $value) {
             if (!defined($key)) {
@@ -24,7 +24,7 @@ class Boot
             }
         }
 
-        foreach ($to_global as $key => $value) {
+        foreach ($to_global as $key => &$value) {
             $GLOBALS[$key] = $value;
         }
     }
