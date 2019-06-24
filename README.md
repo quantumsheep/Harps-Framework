@@ -1,25 +1,26 @@
-# Harps
-## Introduction
-
-> Harps is a powerfull, fast and open-source PHP framework, its goal is to be  flexible and easy to use as possible.
-
+# Harps Framework
+This framework is an (old) attempt to create a light and practical PHP framework in order to enhance the lack of beauty and fun in PHP.
 
 ## Installation
+To install Harps you will first need [Composer](https://getcomposer.org/download/).
 
-> To install Harps you will need composer and just do the command:
-```sh
-$ composer create-project "harps/harps-skeleton" sitedirectory
+Then can install the framework by using the pre-made skeleton:
+```bash
+composer create-project "harps/harps-skeleton" app
 ```
 
+Or by using the components in the framework by adding it in your Composer's dependencies:
+```bash
+composer install "harps/harps"
+```
 
 ## How to use Harps?
-
-> Well, if you haven't use the skeleton, you need to add those lines to your index.php :
+If you don't use the skeleton, you will need to add those lines in your `index.php` file:
 ```php
 require_once(__DIR__ . "/vendor/autoload.php");
 Boot::Harps();
 ```
 
-After that you have two directory, "App" and "Config". In App there is all the Controllers, Models, Managers, Views and Ressources. And in Config there is the Parameters and the Route configurations.
+After that you have two directory, `App` and `Config`. In `App` there are all the `Controllers`, `Models`, `Managers`, `Views` and `Ressources`. In `Config` there is the parameters and the routes configurations.
 
-And that's it, you can now use Harps! See the documentation for more informations.
+And that's it, you can now use Harps! Look at the documentation for more informations.
