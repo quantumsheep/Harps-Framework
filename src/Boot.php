@@ -1,7 +1,6 @@
 <?php
 use Harps\Controllers\View;
 use Harps\Core\Handler;
-use Harps\FilesUtils\Directories;
 use Harps\Routing\Route;
 
 class Boot
@@ -41,7 +40,9 @@ class Boot
         Handler::register();
 
         if (!file_exists(DIR_BLADE_CACHE)) {
-            Directories::create(DIR_BLADE_CACHE, 0777);
+            if (!mkdir(DIR_BLADE_CACHE, 0770, true)) {
+                die("Can't create cache folder: " . DIR_BLADE_CACHE . ". Try to create it manually to fix the issue.");
+            }
         }
 
         self::define_vars();
